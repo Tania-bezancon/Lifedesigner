@@ -5,6 +5,7 @@ import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { Dialogue } from "@/components/dialogue";
 import { startMic, type MicSession } from "@/components/mic";
+import { playArchitect, type ArchSession } from "@/components/architect";
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
@@ -77,40 +78,46 @@ function RevealP({
 }
 
 type ListenState = "idle" | "requesting" | "live" | "denied";
+type ArchState = "idle" | "speaking";
 
 export function Landing() {
   const orbRef = useRef<OrbHandle>(null);
   const micRef = useRef<MicSession | null>(null);
+  const archRef = useRef<ArchSession | null>(null);
   const [listenState, setListenState] = useState<ListenState>("idle");
+  const [archState, setArchState] = useState<ArchState>("idle");
 
   // External (Dialogue → orb) override during the architect's turn.
   const dialogueListenRef = useRef(false);
   function setDialogueListen(on: boolean) {
     dialogueListenRef.current = on;
-    // Don't override real mic data while live.
-    if (listenState !== "live" && orbRef.current) orbRef.current.setListen(on);
+    // Don't override active audio sources (mic or architect pad).
+    if (listenState !== "live" && archState !== "speaking" && orbRef.current) {
+      orbRef.current.setListen(on);
+    }
   }
 
   useEffect(() => {
     return () => {
-      if (micRef.current) micRef.current.stop();
+      micRef.current?.stop();
+      archRef.current?.stop();
       micRef.current = null;
+      archRef.current = null;
     };
   }, []);
 
   async function toggleListen() {
+    if (archState === "speaking") return; // architect's turn — block mic
     if (listenState === "live") {
       micRef.current?.stop();
       micRef.current = null;
       setListenState("idle");
-      // Restore whatever the dialogue wants the orb to be doing.
       orbRef.current?.setListen(dialogueListenRef.current);
       return;
     }
     if (listenState === "denied") {
-      // Soft fallback: just pulse the orb manually.
       orbRef.current?.setListen(true);
-      setListenState("live"); // treat as "on" for the toggle UX
+      setListenState("live");
       return;
     }
     setListenState("requesting");
@@ -120,14 +127,46 @@ export function Landing() {
       });
       micRef.current = session;
       setListenState("live");
-    } catch (err) {
-      // Permission denied or unavailable — degrade gracefully.
+    } catch {
       setListenState("denied");
       orbRef.current?.setListen(true);
     }
   }
 
+  async function toggleHear() {
+    if (archState === "speaking") {
+      archRef.current?.stop();
+      archRef.current = null;
+      setArchState("idle");
+      orbRef.current?.setListen(
+        listenState === "live" ? 0 : dialogueListenRef.current,
+      );
+      return;
+    }
+    // Stop mic if active to avoid signal collision.
+    if (listenState === "live" && micRef.current) {
+      micRef.current.stop();
+      micRef.current = null;
+      setListenState("idle");
+    }
+    setArchState("speaking");
+    try {
+      const session = await playArchitect(
+        (level) => orbRef.current?.setListen(level),
+        () => {
+          archRef.current = null;
+          setArchState("idle");
+          orbRef.current?.setListen(dialogueListenRef.current);
+        },
+      );
+      archRef.current = session;
+    } catch {
+      setArchState("idle");
+    }
+  }
+
   const listening = listenState === "live" || listenState === "requesting";
+  const speaking = archState === "speaking";
 
   return (
     <div className={styles.root}>
@@ -169,24 +208,35 @@ export function Landing() {
 
           <div className={styles.heroOrb} aria-hidden="true">
             <OrbCanvas ref={orbRef} radius={0.3} />
-            <button
-              type="button"
-              className={`${styles.listenMini} ${listening ? styles.listenOn : ""}`}
-              aria-pressed={listening}
-              onClick={toggleListen}
-              disabled={listenState === "requesting"}
-            >
-              <span className={styles.listenDot} />
-              <span>
-                {listenState === "requesting"
-                  ? "asking…"
-                  : listenState === "live"
-                    ? "listening"
-                    : listenState === "denied"
-                      ? "listen (no mic)"
-                      : "listen"}
-              </span>
-            </button>
+            <div className={styles.orbControls}>
+              <button
+                type="button"
+                className={`${styles.listenMini} ${speaking ? styles.listenOn : ""}`}
+                aria-pressed={speaking}
+                onClick={toggleHear}
+              >
+                <span className={styles.listenDot} />
+                <span>{speaking ? "speaking" : "hear"}</span>
+              </button>
+              <button
+                type="button"
+                className={`${styles.listenMini} ${listening ? styles.listenOn : ""}`}
+                aria-pressed={listening}
+                onClick={toggleListen}
+                disabled={listenState === "requesting" || speaking}
+              >
+                <span className={styles.listenDot} />
+                <span>
+                  {listenState === "requesting"
+                    ? "asking…"
+                    : listenState === "live"
+                      ? "listening"
+                      : listenState === "denied"
+                        ? "listen (no mic)"
+                        : "listen"}
+                </span>
+              </button>
+            </div>
           </div>
 
           <a className={styles.scrollHint} href="#story">
