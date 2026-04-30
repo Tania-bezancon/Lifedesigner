@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
-import type { OrbHandle } from "@/components/orb-canvas";
 
 type Speaker = "sarah" | "arch";
 type Line = { who: Speaker; label: string; text: string };
@@ -29,7 +28,11 @@ type RenderedLine = Line & {
   state: "in" | "out";
 };
 
-export function Dialogue({ orbRef }: { orbRef: React.RefObject<OrbHandle> }) {
+export function Dialogue({
+  onArchitectListening,
+}: {
+  onArchitectListening?: (active: boolean) => void;
+}) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const runIdRef = useRef(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -60,7 +63,7 @@ export function Dialogue({ orbRef }: { orbRef: React.RefObject<OrbHandle> }) {
 
   function setActive(who: Speaker | null) {
     setActiveSpeaker(who);
-    if (orbRef.current) orbRef.current.setListen(who === "arch");
+    onArchitectListening?.(who === "arch");
   }
 
   function typewriter(id: number, text: string, charDelay: number, runId: number) {

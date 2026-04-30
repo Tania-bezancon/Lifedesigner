@@ -85,7 +85,8 @@ void main(){
 `;
 
 export type OrbHandle = {
-  setListen: (on: boolean) => void;
+  /** Accepts a boolean (eased toward 0/1) or a number 0..1 (target level for mic). */
+  setListen: (value: boolean | number) => void;
 };
 
 type Props = {
@@ -114,8 +115,14 @@ export const OrbCanvas = forwardRef<OrbHandle, Props>(function OrbCanvas(
   const listenTargetRef = useRef(0);
 
   useImperativeHandle(ref, () => ({
-    setListen(on: boolean) {
-      listenTargetRef.current = on ? 1 : 0;
+    setListen(value: boolean | number) {
+      const v =
+        typeof value === "boolean"
+          ? value
+            ? 1
+            : 0
+          : Math.max(0, Math.min(1, value));
+      listenTargetRef.current = v;
     },
   }));
 
@@ -199,7 +206,7 @@ export const OrbCanvas = forwardRef<OrbHandle, Props>(function OrbCanvas(
     function frame(now: number) {
       if (!mounted) return;
       resize();
-      listen += (listenTargetRef.current - listen) * 0.04;
+      listen += (listenTargetRef.current - listen) * 0.18;
       gl!.useProgram(prog);
       gl!.bindBuffer(gl!.ARRAY_BUFFER, buf);
       gl!.enableVertexAttribArray(aPos);

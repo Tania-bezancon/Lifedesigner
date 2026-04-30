@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { Dialogue } from "@/components/dialogue";
+import { startMic, type MicSession } from "@/components/mic";
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
@@ -75,15 +76,58 @@ function RevealP({
   );
 }
 
+type ListenState = "idle" | "requesting" | "live" | "denied";
+
 export function Landing() {
   const orbRef = useRef<OrbHandle>(null);
-  const [listening, setListening] = useState(false);
+  const micRef = useRef<MicSession | null>(null);
+  const [listenState, setListenState] = useState<ListenState>("idle");
 
-  function toggleListen() {
-    const next = !listening;
-    setListening(next);
-    if (orbRef.current) orbRef.current.setListen(next);
+  // External (Dialogue → orb) override during the architect's turn.
+  const dialogueListenRef = useRef(false);
+  function setDialogueListen(on: boolean) {
+    dialogueListenRef.current = on;
+    // Don't override real mic data while live.
+    if (listenState !== "live" && orbRef.current) orbRef.current.setListen(on);
   }
+
+  useEffect(() => {
+    return () => {
+      if (micRef.current) micRef.current.stop();
+      micRef.current = null;
+    };
+  }, []);
+
+  async function toggleListen() {
+    if (listenState === "live") {
+      micRef.current?.stop();
+      micRef.current = null;
+      setListenState("idle");
+      // Restore whatever the dialogue wants the orb to be doing.
+      orbRef.current?.setListen(dialogueListenRef.current);
+      return;
+    }
+    if (listenState === "denied") {
+      // Soft fallback: just pulse the orb manually.
+      orbRef.current?.setListen(true);
+      setListenState("live"); // treat as "on" for the toggle UX
+      return;
+    }
+    setListenState("requesting");
+    try {
+      const session = await startMic((level) => {
+        orbRef.current?.setListen(level);
+      });
+      micRef.current = session;
+      setListenState("live");
+    } catch (err) {
+      // Permission denied or unavailable — degrade gracefully.
+      setListenState("denied");
+      orbRef.current?.setListen(true);
+    }
+  }
+
+  const listening = listenState === "live" || listenState === "requesting";
 
   return (
     <div className={styles.root}>
@@ -130,9 +174,18 @@ export function Landing() {
               className={`${styles.listenMini} ${listening ? styles.listenOn : ""}`}
               aria-pressed={listening}
               onClick={toggleListen}
+              disabled={listenState === "requesting"}
             >
               <span className={styles.listenDot} />
-              <span>{listening ? "listening" : "listen"}</span>
+              <span>
+                {listenState === "requesting"
+                  ? "asking…"
+                  : listenState === "live"
+                    ? "listening"
+                    : listenState === "denied"
+                      ? "listen (no mic)"
+                      : "listen"}
+              </span>
             </button>
           </div>
 
@@ -165,7 +218,7 @@ export function Landing() {
         </section>
 
         {/* ============== 03 DIALOGUE ============== */}
-        <Dialogue orbRef={orbRef} />
+        <Dialogue onArchitectListening={setDialogueListen} />
 
         {/* ============== 04 PLAN ============== */}
         <section className={styles.sPlan} id="plan">
