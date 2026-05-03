@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
-import { Dialogue } from "@/components/dialogue";
+import { Bridge } from "@/components/bridge";
 import { startMic, type MicSession } from "@/components/mic";
 import {
   playDesigner,
@@ -84,22 +84,6 @@ function RevealP({
   );
 }
 
-/** A small ticker that prints the current time + a fictitious system zone — gives the page a "computed now" feel without claiming truth. */
-function LiveClock() {
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => {
-    const update = () => setNow(new Date());
-    update();
-    const t = setInterval(update, 1000);
-    return () => clearInterval(t);
-  }, []);
-  if (!now) return <span>--:--:--</span>;
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
-  return <span>{`${hh}:${mm}:${ss} · local`}</span>;
-}
-
 /** Small live-feeling counter for "weeks redesigned this hour" — slowly increments to feel computed, not staged. */
 function LiveCounter() {
   const [n, setN] = useState(247);
@@ -123,16 +107,6 @@ export function Landing() {
   const [designerState, setDesignerState] = useState<DesignerState>("idle");
   const [userPlan, setUserPlan] = useState<GeneratedPlan | null>(null);
 
-  // External (Dialogue → orb) override during the designer's turn.
-  const dialogueListenRef = useRef(false);
-  function setDialogueListen(on: boolean) {
-    dialogueListenRef.current = on;
-    // Don't override active audio sources (mic or designer pad).
-    if (listenState !== "live" && designerState !== "speaking" && orbRef.current) {
-      orbRef.current.setListen(on);
-    }
-  }
-
   useEffect(() => {
     return () => {
       micRef.current?.stop();
@@ -148,7 +122,7 @@ export function Landing() {
       micRef.current?.stop();
       micRef.current = null;
       setListenState("idle");
-      orbRef.current?.setListen(dialogueListenRef.current);
+      orbRef.current?.setListen(false);
       return;
     }
     if (listenState === "denied") {
@@ -174,9 +148,7 @@ export function Landing() {
       designerRef.current?.stop();
       designerRef.current = null;
       setDesignerState("idle");
-      orbRef.current?.setListen(
-        listenState === "live" ? 0 : dialogueListenRef.current,
-      );
+      orbRef.current?.setListen(false);
       return;
     }
     // Stop mic if active to avoid signal collision.
@@ -190,7 +162,7 @@ export function Landing() {
     const onComplete = () => {
       designerRef.current = null;
       setDesignerState("idle");
-      orbRef.current?.setListen(dialogueListenRef.current);
+      orbRef.current?.setListen(false);
     };
     try {
       // Prefer real synthesized voice; fall back to procedural pad if SpeechSynthesis is unavailable.
@@ -218,7 +190,6 @@ export function Landing() {
           lifedesigner
         </a>
         <div className={styles.navLinks}>
-          <a href="#mirror">mirror</a>
           <a href="#your-turn">your turn</a>
           <a href="#plan">plan</a>
           <a href="#companion">companion</a>
@@ -282,43 +253,18 @@ export function Landing() {
             </div>
           </div>
 
-          <a className={styles.scrollHint} href="#mirror">
-            you, this week
+          <a className={styles.scrollHint} href="#your-turn">
+            your turn
           </a>
         </section>
 
-        {/* ============== 02 MIRROR — direct address ============== */}
-        <section className={styles.sMirror} id="mirror">
-          <div className={styles.storyHalo} aria-hidden="true" />
-          <div className={styles.mirrorInner}>
-            <RevealDiv className={styles.mirrorMeta}>
-              <span className={styles.mirrorTechLabel}>presence.observe()</span>
-              <span className={styles.mirrorTimestamp}>
-                <LiveClock />
-              </span>
-            </RevealDiv>
-            <RevealH2 className={`${styles.display} ${styles.mirrorHeadline}`}>
-              every week<br />
-              <span className={styles.it}>is the same.</span>
-            </RevealH2>
-            <RevealDiv className={styles.mirrorLines}>
-              <p className={styles.mirrorLine}>you wake up tired.</p>
-              <p className={styles.mirrorLine}>you scroll until one.</p>
-              <p className={styles.mirrorLine}>you say tomorrow.</p>
-              <p className={`${styles.mirrorLine} ${styles.mirrorClose}`}>
-                tomorrow&apos;s monday.
-              </p>
-            </RevealDiv>
-          </div>
-        </section>
+        {/* ============== 02 BRIDGE — cinematic breath ============== */}
+        <Bridge />
 
-        {/* ============== 03 DIALOGUE ============== */}
-        <Dialogue onDesignerListening={setDialogueListen} />
-
-        {/* ============== 04 YOUR TURN — interactive ============== */}
+        {/* ============== 03 YOUR TURN — interactive ============== */}
         <YourTurn orbRef={orbRef} onPlanGenerated={setUserPlan} />
 
-        {/* ============== 05 PLAN ============== */}
+        {/* ============== 04 PLAN ============== */}
         <PlanSection plan={userPlan} />
 
         {/* ============== 05 COMPANION ============== */}
