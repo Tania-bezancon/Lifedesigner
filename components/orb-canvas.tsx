@@ -52,9 +52,6 @@ void main(){
   p.x*=u_aspect;
   float t=u_time*0.18;
 
-  float bgGlow = smoothstep(0.9, 0.0, length(p));
-  vec3 col = mix(u_bg, u_bg + vec3(0.012,0.008,0.000), bgGlow*0.5);
-
   vec2 op = p;
   float r = length(op);
   float listen = u_listen;
@@ -70,17 +67,24 @@ void main(){
   vec3 orbCol = mix(u_c2, u_c1, smoothstep(0.2,0.85,band));
   orbCol = mix(orbCol, u_c3, smoothstep(0.65,1.0,band)*0.5);
 
-  float edge = smoothstep(radius, radius - 0.18, r);
-  float halo = smoothstep(radius+0.16, radius, r) * 0.18;
-  float listenGlow = listen * smoothstep(radius+0.08, radius-0.04, r) * 0.16;
+  // Body: opaque inside the radius, soft falloff at the edge.
+  float bodyAlpha = smoothstep(radius, radius - 0.16, r);
+  // Outer halo: tight glow that dissolves cleanly into the page background.
+  // Quadratic shaping makes the falloff feel optical — the canvas's
+  // rectangular bounds stay invisible because alpha reaches 0 well before
+  // the canvas edge.
+  float haloRaw = smoothstep(radius + 0.20, radius, r);
+  float halo = haloRaw * haloRaw * 0.40;
+  // Listen-driven glow — extends a touch further when active.
+  float listenGlow = listen * smoothstep(radius + 0.16, radius - 0.04, r) * 0.32;
 
-  vec3 final = mix(col, orbCol, edge);
-  final += orbCol * (halo + listenGlow);
+  float alpha = clamp(bodyAlpha + halo + listenGlow, 0.0, 1.0);
 
+  // Subtle inner depth shading, only relevant inside the orb body.
   float depth = smoothstep(radius, radius*0.2, r);
-  final = mix(final, final*0.92, depth*0.25);
+  vec3 col = mix(orbCol, orbCol*0.92, depth*0.25);
 
-  gl_FragColor = vec4(final, 1.0);
+  gl_FragColor = vec4(col, alpha);
 }
 `;
 
@@ -132,9 +136,16 @@ export const OrbCanvas = forwardRef<OrbHandle, Props>(function OrbCanvas(
     const gl = canvas.getContext("webgl", {
       antialias: true,
       premultipliedAlpha: false,
-      alpha: false,
+      alpha: true,
     });
     if (!gl) return;
+    // We draw a single full-screen quad per frame and write straight
+    // (non-premultiplied) RGBA. Disable WebGL blending so the framebuffer
+    // holds the shader's output verbatim; the browser compositor blends
+    // the canvas with whatever is behind it (cream page bg or another
+    // section background) using src.rgb * src.a + dst * (1 - a).
+    gl.disable(gl.BLEND);
+    gl.clearColor(0, 0, 0, 0);
 
     function compile(type: number, src: string) {
       const s = gl!.createShader(type);
@@ -207,6 +218,7 @@ export const OrbCanvas = forwardRef<OrbHandle, Props>(function OrbCanvas(
       if (!mounted) return;
       resize();
       listen += (listenTargetRef.current - listen) * 0.18;
+      gl!.clear(gl!.COLOR_BUFFER_BIT);
       gl!.useProgram(prog);
       gl!.bindBuffer(gl!.ARRAY_BUFFER, buf);
       gl!.enableVertexAttribArray(aPos);
