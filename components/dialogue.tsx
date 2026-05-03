@@ -3,20 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 
-type Speaker = "sarah" | "arch";
+type Speaker = "sarah" | "des";
 type Line = { who: Speaker; label: string; text: string };
 
 const SCRIPT: Line[] = [
   { who: "sarah", label: "sarah", text: "i sleep badly. i've lost my rhythm." },
-  { who: "arch", label: "the architect", text: "what would a good week look like?" },
+  { who: "des", label: "the designer", text: "what would a good week look like?" },
   {
     who: "sarah",
     label: "sarah",
     text: "waking up without an alarm. reading a little. seeing lea again.",
   },
   {
-    who: "arch",
-    label: "the architect",
+    who: "des",
+    label: "the designer",
     text: "okay. we'll start gently — monday, seven a.m.",
   },
 ];
@@ -29,9 +29,9 @@ type RenderedLine = Line & {
 };
 
 export function Dialogue({
-  onArchitectListening,
+  onDesignerListening,
 }: {
-  onArchitectListening?: (active: boolean) => void;
+  onDesignerListening?: (active: boolean) => void;
 }) {
   const sectionRef = useRef<HTMLDivElement | null>(null);
   const runIdRef = useRef(0);
@@ -63,7 +63,7 @@ export function Dialogue({
 
   function setActive(who: Speaker | null) {
     setActiveSpeaker(who);
-    onArchitectListening?.(who === "arch");
+    onDesignerListening?.(who === "des");
   }
 
   function typewriter(id: number, text: string, charDelay: number, runId: number) {
@@ -138,8 +138,8 @@ export function Dialogue({
       }
 
       await wait(280, myRun);
-      await typewriter(id, item.text, item.who === "arch" ? 28 : 32, myRun);
-      await wait(item.who === "arch" ? 900 : 700, myRun);
+      await typewriter(id, item.text, item.who === "des" ? 28 : 32, myRun);
+      await wait(item.who === "des" ? 900 : 700, myRun);
     }
 
     if (myRun === runIdRef.current) setActive(null);
@@ -207,7 +207,7 @@ export function Dialogue({
           >
             <span
               className={`${styles.bLineWho} ${
-                line.who === "arch" ? styles.bLineWhoArch : ""
+                line.who === "des" ? styles.bLineWhoDes : ""
               }`}
             >
               {line.label}
@@ -231,12 +231,12 @@ export function Dialogue({
       </div>
 
       <div
-        className={`${styles.speaker} ${styles.architect} ${styles.reveal} ${styles.in} ${
-          activeSpeaker === "arch" ? styles.active : ""
+        className={`${styles.speaker} ${styles.designer} ${styles.reveal} ${styles.in} ${
+          activeSpeaker === "des" ? styles.active : ""
         }`}
       >
         <div className={styles.av} />
-        <div className={styles.who}>the architect</div>
+        <div className={styles.who}>the designer</div>
         <div className={styles.speakerRole}>listens</div>
       </div>
     </section>

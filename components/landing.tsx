@@ -5,7 +5,7 @@ import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { Dialogue } from "@/components/dialogue";
 import { startMic, type MicSession } from "@/components/mic";
-import { playArchitect, type ArchSession } from "@/components/architect";
+import { playDesigner, type DesignerSession } from "@/components/designer";
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
@@ -78,21 +78,21 @@ function RevealP({
 }
 
 type ListenState = "idle" | "requesting" | "live" | "denied";
-type ArchState = "idle" | "speaking";
+type DesignerState = "idle" | "speaking";
 
 export function Landing() {
   const orbRef = useRef<OrbHandle>(null);
   const micRef = useRef<MicSession | null>(null);
-  const archRef = useRef<ArchSession | null>(null);
+  const designerRef = useRef<DesignerSession | null>(null);
   const [listenState, setListenState] = useState<ListenState>("idle");
-  const [archState, setArchState] = useState<ArchState>("idle");
+  const [designerState, setDesignerState] = useState<DesignerState>("idle");
 
-  // External (Dialogue → orb) override during the architect's turn.
+  // External (Dialogue → orb) override during the designer's turn.
   const dialogueListenRef = useRef(false);
   function setDialogueListen(on: boolean) {
     dialogueListenRef.current = on;
-    // Don't override active audio sources (mic or architect pad).
-    if (listenState !== "live" && archState !== "speaking" && orbRef.current) {
+    // Don't override active audio sources (mic or designer pad).
+    if (listenState !== "live" && designerState !== "speaking" && orbRef.current) {
       orbRef.current.setListen(on);
     }
   }
@@ -100,14 +100,14 @@ export function Landing() {
   useEffect(() => {
     return () => {
       micRef.current?.stop();
-      archRef.current?.stop();
+      designerRef.current?.stop();
       micRef.current = null;
-      archRef.current = null;
+      designerRef.current = null;
     };
   }, []);
 
   async function toggleListen() {
-    if (archState === "speaking") return; // architect's turn — block mic
+    if (designerState === "speaking") return; // designer's turn — block mic
     if (listenState === "live") {
       micRef.current?.stop();
       micRef.current = null;
@@ -134,10 +134,10 @@ export function Landing() {
   }
 
   async function toggleHear() {
-    if (archState === "speaking") {
-      archRef.current?.stop();
-      archRef.current = null;
-      setArchState("idle");
+    if (designerState === "speaking") {
+      designerRef.current?.stop();
+      designerRef.current = null;
+      setDesignerState("idle");
       orbRef.current?.setListen(
         listenState === "live" ? 0 : dialogueListenRef.current,
       );
@@ -149,24 +149,24 @@ export function Landing() {
       micRef.current = null;
       setListenState("idle");
     }
-    setArchState("speaking");
+    setDesignerState("speaking");
     try {
-      const session = await playArchitect(
+      const session = await playDesigner(
         (level) => orbRef.current?.setListen(level),
         () => {
-          archRef.current = null;
-          setArchState("idle");
+          designerRef.current = null;
+          setDesignerState("idle");
           orbRef.current?.setListen(dialogueListenRef.current);
         },
       );
-      archRef.current = session;
+      designerRef.current = session;
     } catch {
-      setArchState("idle");
+      setDesignerState("idle");
     }
   }
 
   const listening = listenState === "live" || listenState === "requesting";
-  const speaking = archState === "speaking";
+  const speaking = designerState === "speaking";
 
   return (
     <div className={styles.root}>
@@ -268,7 +268,7 @@ export function Landing() {
         </section>
 
         {/* ============== 03 DIALOGUE ============== */}
-        <Dialogue onArchitectListening={setDialogueListen} />
+        <Dialogue onDesignerListening={setDialogueListen} />
 
         {/* ============== 04 PLAN ============== */}
         <section className={styles.sPlan} id="plan">
@@ -282,7 +282,7 @@ export function Landing() {
               </h2>
             </div>
             <p className={styles.planHeadRight}>
-              the architect doesn&apos;t write an essay. it renders a week — concrete,
+              the designer doesn&apos;t write an essay. it renders a week — concrete,
               modest, mindful of your monday.
             </p>
           </RevealDiv>
@@ -389,7 +389,7 @@ export function Landing() {
               <span className={styles.it}>chatbot.</span>
             </h2>
             <p className={styles.quiet}>
-              the architect knows you. it remembers last time. it stays with you over time —
+              the designer knows you. it remembers last time. it stays with you over time —
               in a 360 way.
             </p>
           </RevealDiv>

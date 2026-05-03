@@ -1,4 +1,4 @@
-export type ArchSession = {
+export type DesignerSession = {
   stop: () => void;
 };
 
@@ -11,10 +11,10 @@ export type ArchSession = {
  * Total duration ≈ 6 seconds. `onLevel(0..1)` is called at animation-frame
  * rate while the pad plays. `onComplete()` fires once the release tail ends.
  */
-export async function playArchitect(
+export async function playDesigner(
   onLevel: (level: number) => void,
   onComplete: () => void,
-): Promise<ArchSession> {
+): Promise<DesignerSession> {
   const AC = window.AudioContext || (window as any).webkitAudioContext;
   const ac: AudioContext = new AC();
   if (ac.state === "suspended") await ac.resume();
