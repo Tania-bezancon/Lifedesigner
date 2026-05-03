@@ -77,8 +77,8 @@ export function PlanSection({ plan }: { plan: GeneratedPlan | null }) {
         }`}
       >
         <div>
-          <span className={styles.sectionNum}>
-            {isUser ? "your plan" : "the plan"}
+          <span className={styles.techLabel}>
+            {isUser ? "week.render(you)" : "week.render(default)"}
           </span>
           <h2 className={styles.display} style={{ marginTop: 16 }}>
             {isUser ? (
@@ -117,7 +117,10 @@ export function PlanSection({ plan }: { plan: GeneratedPlan | null }) {
             {d.items.map((it, j) => (
               <div className={styles.planItem} key={j}>
                 <span className={styles.planTime}>{it.time}</span>
-                <span>{it.text}</span>
+                <span className={styles.planItemBody}>
+                  <span className={styles.planItemText}>{it.text}</span>
+                  {it.why && <span className={styles.planItemWhy}>{it.why}</span>}
+                </span>
               </div>
             ))}
           </div>
@@ -129,8 +132,15 @@ export function PlanSection({ plan }: { plan: GeneratedPlan | null }) {
           revealedCount >= days.length ? styles.in : ""
         }`}
       >
-        <span className={styles.pill}>{isUser ? "saved" : "5 habits"}</span>
-        <span>they&apos;ll adjust with you, day by day.</span>
+        <span className={styles.pill}>
+          <span className={styles.tnum}>
+            {days.reduce((acc, d) => acc + d.items.length, 0)}
+          </span>{" "}
+          actions
+        </span>
+        <span className={styles.planFootMsg}>
+          they&apos;ll adjust with you, day by day.
+        </span>
         {isUser && (
           <button
             type="button"

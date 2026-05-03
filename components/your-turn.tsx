@@ -6,6 +6,7 @@ import type { OrbHandle } from "@/components/orb-canvas";
 import { generatePlan, type GeneratedPlan } from "@/lib/generate-plan";
 
 type Phase = "idle" | "thinking" | "replying" | "done";
+type Timing = { tookMs: number };
 
 const PLACEHOLDERS = [
   "i sleep badly. i scroll until 1am.",
@@ -28,6 +29,7 @@ export function YourTurn({
   const [typing, setTyping] = useState<string>("");
   const [placeholder, setPlaceholder] = useState(PLACEHOLDERS[0]);
   const [submittedIntent, setSubmittedIntent] = useState("");
+  const [timing, setTiming] = useState<Timing | null>(null);
   const generatedRef = useRef<GeneratedPlan | null>(null);
 
   // Rotate placeholder on idle every few seconds for life.
@@ -48,12 +50,14 @@ export function YourTurn({
     setSubmittedIntent(text);
     setPhase("thinking");
     orbRef.current?.setListen(0.7);
+    const t0 = performance.now();
 
     // "designing" pause — long enough to feel intentional, short enough not to bore.
     await new Promise((r) => setTimeout(r, 1700));
 
     const generated = generatePlan(text);
     generatedRef.current = generated;
+    setTiming({ tookMs: Math.round(performance.now() - t0) });
     setPhase("replying");
 
     // typewriter each reply line, with deliberate pauses between
@@ -88,6 +92,7 @@ export function YourTurn({
     setReply([]);
     setTyping("");
     setSubmittedIntent("");
+    setTiming(null);
     generatedRef.current = null;
     setPhase("idle");
     setTimeout(() => inputRef.current?.focus(), 100);
@@ -97,9 +102,9 @@ export function YourTurn({
     <section className={styles.sYourTurn} id="your-turn">
       <div className={styles.yourTurnInner}>
         <div className={styles.yourTurnEyebrow}>
-          <span className={styles.sectionNum}>now you</span>
+          <span className={styles.techLabel}>presence.calibrate()</span>
           <span className={styles.silenceMetric}>
-            the designer averages 12 words per reply.
+            the designer averages <span className={styles.tnum}>12</span> words per reply.
           </span>
         </div>
 
@@ -167,6 +172,15 @@ export function YourTurn({
 
             {phase === "done" && (
               <div className={styles.yourTurnFoot}>
+                <span className={styles.yourTurnSysline}>
+                  archetype:{" "}
+                  <span className={styles.tnum}>{generatedRef.current?.archetype}</span>
+                  {" · "}
+                  rendered in{" "}
+                  <span className={styles.tnum}>
+                    {timing ? `${(timing.tookMs / 1000).toFixed(2)}s` : "—"}
+                  </span>
+                </span>
                 <span className={styles.yourTurnFootHint}>
                   ↓ your week, just below
                 </span>

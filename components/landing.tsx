@@ -84,6 +84,34 @@ function RevealP({
   );
 }
 
+/** A small ticker that prints the current time + a fictitious system zone — gives the page a "computed now" feel without claiming truth. */
+function LiveClock() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    const update = () => setNow(new Date());
+    update();
+    const t = setInterval(update, 1000);
+    return () => clearInterval(t);
+  }, []);
+  if (!now) return <span>--:--:--</span>;
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  return <span>{`${hh}:${mm}:${ss} · local`}</span>;
+}
+
+/** Small live-feeling counter for "weeks redesigned this hour" — slowly increments to feel computed, not staged. */
+function LiveCounter() {
+  const [n, setN] = useState(247);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setN((prev) => prev + (Math.random() < 0.4 ? 1 : 0));
+    }, 4200);
+    return () => clearInterval(t);
+  }, []);
+  return <span className={styles.tnum}>{n}</span>;
+}
+
 type ListenState = "idle" | "requesting" | "live" | "denied";
 type DesignerState = "idle" | "speaking";
 
@@ -190,7 +218,8 @@ export function Landing() {
           lifedesigner
         </a>
         <div className={styles.navLinks}>
-          <a href="#story">how</a>
+          <a href="#mirror">mirror</a>
+          <a href="#your-turn">your turn</a>
           <a href="#plan">plan</a>
           <a href="#companion">companion</a>
         </div>
@@ -214,7 +243,9 @@ export function Landing() {
             </p>
             <div className={styles.heroMeta}>
               <span className={styles.pip} aria-hidden="true" />
-              <span>private beta · est. 2026</span>
+              <span>
+                private beta · <LiveCounter /> weeks redesigned this hour
+              </span>
             </div>
           </RevealDiv>
 
@@ -251,30 +282,32 @@ export function Landing() {
             </div>
           </div>
 
-          <a className={styles.scrollHint} href="#story">
-            a story
+          <a className={styles.scrollHint} href="#mirror">
+            you, this week
           </a>
         </section>
 
-        {/* ============== 02 STORY ============== */}
-        <section className={styles.sStory} id="story">
+        {/* ============== 02 MIRROR — direct address ============== */}
+        <section className={styles.sMirror} id="mirror">
           <div className={styles.storyHalo} aria-hidden="true" />
-          <div className={styles.storyGrid}>
-            <RevealDiv className={styles.storyMeta}>
-              <span>a story — sarah, 31, brooklyn</span>
-              <span>part i</span>
+          <div className={styles.mirrorInner}>
+            <RevealDiv className={styles.mirrorMeta}>
+              <span className={styles.mirrorTechLabel}>presence.observe()</span>
+              <span className={styles.mirrorTimestamp}>
+                <LiveClock />
+              </span>
             </RevealDiv>
-            <RevealH2 className={`${styles.display} ${styles.storyHeadline}`}>
-              finding
-              <br />
-              <span className={styles.it}>a rhythm.</span>
+            <RevealH2 className={`${styles.display} ${styles.mirrorHeadline}`}>
+              every week<br />
+              <span className={styles.it}>is the same.</span>
             </RevealH2>
-            <RevealDiv className={styles.storyQuote}>
-              <p className={styles.q}>
-                “i sleep badly. i scroll until 1am. i&apos;ve lost my rituals, my workout, my
-                friends a little too. i want to find a rhythm again — without forcing it.”
+            <RevealDiv className={styles.mirrorLines}>
+              <p className={styles.mirrorLine}>you wake up tired.</p>
+              <p className={styles.mirrorLine}>you scroll until one.</p>
+              <p className={styles.mirrorLine}>you say tomorrow.</p>
+              <p className={`${styles.mirrorLine} ${styles.mirrorClose}`}>
+                tomorrow&apos;s monday.
               </p>
-              <p className={styles.attr}>— sarah, six months after a breakup</p>
             </RevealDiv>
           </div>
         </section>

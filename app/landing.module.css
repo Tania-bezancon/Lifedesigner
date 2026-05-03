@@ -100,6 +100,22 @@
   color: var(--ink-quiet);
 }
 
+/* technical / system labels — give the page a computed feel without being loud */
+.techLabel {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+  text-transform: lowercase;
+  font-feature-settings: "tnum", "ss01";
+}
+
+/* tabular numerals — for any computed-looking number (times, counters) */
+.tnum {
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
 .display {
   font-weight: 500;
   font-size: clamp(48px, 7.5vw, 112px);
@@ -237,7 +253,66 @@
   }
 }
 
-/* ============== 02 STORY ============== */
+/* ============== 02 MIRROR — direct address ============== */
+.sMirror {
+  padding: 18vh 0 18vh;
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+}
+.mirrorInner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 0;
+}
+.mirrorMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: clamp(60px, 10vh, 120px);
+}
+.mirrorTechLabel {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+  font-feature-settings: "tnum";
+}
+.mirrorTimestamp {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+  font-feature-settings: "tnum";
+}
+.mirrorHeadline {
+  max-width: 14ch;
+  margin-bottom: clamp(60px, 10vh, 120px);
+}
+.mirrorLines {
+  max-width: 38ch;
+  margin-left: auto;
+}
+.mirrorLine {
+  font-size: clamp(18px, 1.6vw, 24px);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.mirrorClose {
+  margin-top: 22px;
+  color: var(--coral);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+/* legacy story styles kept for any old refs (will be unused) */
 .sStory {
   padding: 18vh 0 18vh;
   position: relative;
@@ -460,12 +535,25 @@
   display: flex;
   align-items: flex-end;
   gap: 24px;
-  border-bottom: 1px solid var(--rule-strong);
-  padding-bottom: 14px;
-  transition: border-color 320ms ease;
+  padding: 18px 22px 18px 22px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  transition:
+    border-color 320ms ease,
+    box-shadow 320ms ease,
+    background 320ms ease;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 44px -32px rgba(28, 25, 23, 0.18);
 }
 .yourTurnInputWrap:focus-within {
-  border-color: var(--ink);
+  border-color: var(--coral);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 0 0 4px rgba(225, 106, 79, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 24px 60px -32px rgba(225, 106, 79, 0.28);
 }
 .yourTurnInput {
   flex: 1;
@@ -603,6 +691,15 @@
   color: var(--coral);
   animation: pip 2.4s ease-in-out infinite;
 }
+.yourTurnSysline {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+  text-transform: lowercase;
+  flex: 1;
+  min-width: 0;
+}
 .yourTurnReset {
   font-size: 11.5px;
   letter-spacing: 0.18em;
@@ -661,11 +758,11 @@
 }
 .planDay {
   background: var(--paper);
-  padding: 22px 18px 26px;
-  min-height: 220px;
+  padding: 20px 16px 22px;
+  min-height: 260px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   position: relative;
 }
 .planDayHead {
@@ -688,21 +785,48 @@
   font-size: 13.5px;
   line-height: 1.4;
   color: var(--ink);
-  padding: 8px 0;
+  padding: 10px 0;
   border-top: 1px solid var(--rule);
   display: flex;
   align-items: baseline;
-  gap: 8px;
+  gap: 10px;
 }
 .planItem:first-of-type {
   border-top: 0;
   padding-top: 0;
 }
 .planTime {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
   font-size: 10.5px;
   color: var(--ink-quiet);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.02em;
   min-width: 48px;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  padding-top: 2px;
+}
+.planItemBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.planItemText {
+  display: block;
+  font-size: 13.5px;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  line-height: 1.35;
+}
+.planItemWhy {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-quiet);
+  letter-spacing: -0.005em;
+  line-height: 1.4;
+  font-style: italic;
+  opacity: 0.85;
 }
 .today {
   background: linear-gradient(180deg, #fdf6ea 0%, var(--paper) 100%);
@@ -724,6 +848,10 @@
   font-size: 12px;
   letter-spacing: 0.06em;
   color: var(--ink-soft);
+}
+.planFootMsg {
+  flex: 1;
+  min-width: 0;
 }
 .pill {
   border: 1px solid var(--rule-strong);

@@ -3,21 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 
-type Speaker = "sarah" | "des";
+type Speaker = "you" | "des";
 type Line = { who: Speaker; label: string; text: string };
 
 const SCRIPT: Line[] = [
-  { who: "sarah", label: "sarah", text: "i sleep badly. i've lost my rhythm." },
-  { who: "des", label: "the designer", text: "what would a good week look like?" },
+  { who: "you", label: "you", text: "i wake up tired. i scroll. i forget what i wanted." },
   {
-    who: "sarah",
-    label: "sarah",
-    text: "waking up without an alarm. reading a little. seeing lea again.",
+    who: "des",
+    label: "the designer",
+    text: "what would a good monday morning feel like?",
+  },
+  {
+    who: "you",
+    label: "you",
+    text: "slow. light. someone i miss, mid-week.",
   },
   {
     who: "des",
     label: "the designer",
-    text: "okay. we'll start gently — monday, seven a.m.",
+    text: "okay. 07:12 monday — sunlight before the phone.",
   },
 ];
 
@@ -186,11 +190,11 @@ export function Dialogue({
     <section ref={sectionRef} className={styles.sDialogue}>
       <div
         className={`${styles.speaker} ${styles.reveal} ${styles.in} ${
-          activeSpeaker === "sarah" ? styles.active : ""
+          activeSpeaker === "you" ? styles.active : ""
         }`}
       >
         <div className={styles.av} />
-        <div className={styles.who}>sarah</div>
+        <div className={styles.who}>you</div>
         <div className={styles.speakerRole}>speaks</div>
       </div>
 
