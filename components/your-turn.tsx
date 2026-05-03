@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
-import type { OrbHandle } from "@/components/orb-canvas";
+import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { generatePlan, type GeneratedPlan } from "@/lib/generate-plan";
 
 type Phase = "idle" | "thinking" | "replying" | "done";
@@ -23,6 +23,9 @@ export function YourTurn({
   onPlanGenerated: (plan: GeneratedPlan) => void;
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const miniOrbRef = useRef<OrbHandle>(null);
+  const typingPulseRef = useRef(0);
+  const typingDecayRafRef = useRef<number | null>(null);
   const [input, setInput] = useState("");
   const [phase, setPhase] = useState<Phase>("idle");
   const [reply, setReply] = useState<string[]>([]);
@@ -31,6 +34,26 @@ export function YourTurn({
   const [submittedIntent, setSubmittedIntent] = useState("");
   const [timing, setTiming] = useState<Timing | null>(null);
   const generatedRef = useRef<GeneratedPlan | null>(null);
+
+  // Decay loop for the mini-orb's typing pulse.
+  useEffect(() => {
+    function tick() {
+      typingPulseRef.current = Math.max(0, typingPulseRef.current * 0.92);
+      if (phase === "idle" && miniOrbRef.current) {
+        miniOrbRef.current.setListen(typingPulseRef.current);
+      }
+      typingDecayRafRef.current = requestAnimationFrame(tick);
+    }
+    typingDecayRafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (typingDecayRafRef.current) cancelAnimationFrame(typingDecayRafRef.current);
+    };
+  }, [phase]);
+
+  function bumpTypingPulse() {
+    // small pulse on every keystroke; clamped at 0.9 so consecutive presses don't pin to 1
+    typingPulseRef.current = Math.min(0.9, typingPulseRef.current + 0.35);
+  }
 
   // Rotate placeholder on idle every few seconds for life.
   useEffect(() => {
@@ -50,6 +73,7 @@ export function YourTurn({
     setSubmittedIntent(text);
     setPhase("thinking");
     orbRef.current?.setListen(0.7);
+    miniOrbRef.current?.setListen(0.85);
     const t0 = performance.now();
 
     // "designing" pause — long enough to feel intentional, short enough not to bore.
@@ -74,10 +98,14 @@ export function YourTurn({
     }
 
     orbRef.current?.setListen(0.2);
+    miniOrbRef.current?.setListen(0.4);
     onPlanGenerated(generated);
     setPhase("done");
-    // settle the orb back to baseline
-    setTimeout(() => orbRef.current?.setListen(false), 1200);
+    // settle the orbs back to baseline
+    setTimeout(() => {
+      orbRef.current?.setListen(false);
+      miniOrbRef.current?.setListen(false);
+    }, 1200);
   }
 
   function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -115,12 +143,18 @@ export function YourTurn({
 
         {phase === "idle" && (
           <div className={styles.yourTurnInputWrap}>
+            <div className={styles.yourTurnMiniOrb} aria-hidden="true">
+              <OrbCanvas ref={miniOrbRef} radius={0.34} />
+            </div>
             <input
               ref={inputRef}
               className={styles.yourTurnInput}
               placeholder={placeholder}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                bumpTypingPulse();
+              }}
               onKeyDown={onKey}
               maxLength={140}
               aria-label="tell the designer one thing about your week"

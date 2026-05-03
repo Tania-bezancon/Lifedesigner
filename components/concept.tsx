@@ -156,31 +156,6 @@ export function Concept() {
         </div>
       </div>
 
-      <div
-        className={`${styles.conceptStats} ${
-          revealed ? styles.in : styles.reveal
-        }`}
-      >
-        <span className={styles.conceptStat}>
-          <span className={styles.conceptStatNum}>3m 14s</span>
-          <span className={styles.conceptStatLabel}>median session</span>
-        </span>
-        <span className={styles.conceptStatSep} />
-        <span className={styles.conceptStat}>
-          <span className={styles.conceptStatNum}>12</span>
-          <span className={styles.conceptStatLabel}>words per reply</span>
-        </span>
-        <span className={styles.conceptStatSep} />
-        <span className={styles.conceptStat}>
-          <span className={styles.conceptStatNum}>1,247</span>
-          <span className={styles.conceptStatLabel}>weeks this season</span>
-        </span>
-        <span className={styles.conceptStatSep} />
-        <span className={styles.conceptStat}>
-          <span className={styles.conceptStatNum}>0</span>
-          <span className={styles.conceptStatLabel}>notifications</span>
-        </span>
-      </div>
     </section>
   );
 }

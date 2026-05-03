@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { Concept } from "@/components/concept";
+import { StickyOrb } from "@/components/sticky-orb";
 import { startMic, type MicSession } from "@/components/mic";
 import {
   playDesigner,
@@ -94,6 +95,42 @@ function LiveCounter() {
     return () => clearInterval(t);
   }, []);
   return <span className={styles.tnum}>{n}</span>;
+}
+
+/** A large breathing orb behind the CTA headline — closes the page on the same motif as the opening. */
+function CtaBackdropOrb() {
+  const orbRef = useRef<OrbHandle>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      orbRef.current?.setListen(0.5);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            // gentle swell when the section enters view
+            orbRef.current?.setListen(0.55);
+          } else {
+            orbRef.current?.setListen(0.2);
+          }
+        }
+      },
+      { threshold: 0.18 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div ref={wrapRef} className={styles.ctaOrb} aria-hidden="true">
+      <OrbCanvas ref={orbRef} radius={0.42} />
+    </div>
+  );
 }
 
 type ListenState = "idle" | "requesting" | "live" | "denied";
@@ -241,6 +278,7 @@ export function Landing() {
     <div className={styles.root}>
       <div className={styles.grain} />
       <div ref={progressRef} className={styles.scrollProgress} aria-hidden="true" />
+      <StickyOrb />
 
       <nav className={styles.nav}>
         <a className={styles.mark} href="#">
@@ -378,7 +416,8 @@ export function Landing() {
 
         {/* ============== 06 CTA ============== */}
         <section className={styles.sCta} id="cta">
-          <RevealH2 className={styles.display}>
+          <CtaBackdropOrb />
+          <RevealH2 className={`${styles.display} ${styles.ctaHeadline}`}>
             begin
             <br />
             <span className={styles.it}>monday.</span>
@@ -390,8 +429,8 @@ export function Landing() {
             <a href="#" className={`${styles.btn} ${styles.btnPrimary}`}>
               request access
             </a>
-            <a href="#story" className={`${styles.btn} ${styles.btnGhost}`}>
-              revisit the story
+            <a href="#hero" className={`${styles.btn} ${styles.btnGhost}`}>
+              back to top
             </a>
           </RevealDiv>
           <RevealDiv className={styles.ctaFoot}>free · 7 days · no card</RevealDiv>
