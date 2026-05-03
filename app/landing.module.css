@@ -70,8 +70,28 @@
   color: var(--ink-soft);
   letter-spacing: 0.02em;
 }
+.navLinks a {
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 240ms ease;
+}
+.navLinks a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--coral);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
 .navLinks a:hover {
   color: var(--ink);
+}
+.navLinks a:hover::after {
+  transform: scaleX(1);
 }
 .ctaMini {
   font-size: 12.5px;
@@ -253,7 +273,247 @@
   }
 }
 
-/* ============== 02 BRIDGE — cinematic breath ============== */
+/* ============== scroll progress bar ============== */
+.scrollProgress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--coral), #f3a685);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  z-index: 60;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(225, 106, 79, 0.5);
+}
+
+/* ============== 02 CONCEPT — explainer ============== */
+.sConcept {
+  padding: 16vh 0 12vh;
+  position: relative;
+}
+.conceptHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: clamp(36px, 5vh, 64px);
+  flex-wrap: wrap;
+}
+.conceptVersion {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+  font-feature-settings: "tnum";
+}
+.conceptHeadline {
+  max-width: 14ch;
+  margin-bottom: clamp(60px, 8vh, 120px);
+}
+.conceptGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: start;
+}
+
+/* transcript card */
+.conceptDialog {
+  position: relative;
+  border: 1px solid var(--rule);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  padding: 28px 30px 32px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 30px 80px -50px rgba(28, 25, 23, 0.25);
+  overflow: hidden;
+}
+.conceptDialog::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  opacity: 0.6;
+}
+.conceptDialogMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--rule);
+}
+.conceptDialogChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-quiet);
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+}
+.conceptDialogPip {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 8px var(--coral);
+  animation: pip 1.6s ease-in-out infinite;
+}
+.conceptDialogTime {
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-quiet);
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+}
+.conceptDialogBody {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.conceptLine {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 18px;
+  align-items: baseline;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.in .conceptLine,
+.conceptDialog.in .conceptLine {
+  opacity: 1;
+  transform: none;
+}
+/* fallback: when section is revealed, all lines fade in via parent .in */
+.sConcept .in .conceptLine {
+  opacity: 1;
+  transform: none;
+}
+.conceptLineWho {
+  font-size: 10.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-quiet);
+  padding-top: 3px;
+}
+.conceptLineDes .conceptLineWho {
+  color: var(--coral);
+}
+.conceptLineText {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+
+/* aside: blurb + 3 pillars */
+.conceptAside {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.conceptAsideQuiet {
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+  letter-spacing: -0.005em;
+  max-width: 38ch;
+}
+.conceptPillars {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--rule);
+}
+.conceptPillar {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 14px;
+  row-gap: 4px;
+  padding: 18px 0 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.conceptPillarNum {
+  grid-row: 1 / span 2;
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-quiet);
+  padding-top: 5px;
+  font-feature-settings: "tnum";
+}
+.conceptPillarTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+.conceptPillarBody {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  letter-spacing: -0.005em;
+}
+
+/* stats strip */
+.conceptStats {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(20px, 3vw, 36px);
+  margin-top: clamp(48px, 7vh, 96px);
+  padding: 24px 28px;
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+}
+.conceptStat {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.conceptStatNum {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+.conceptStatLabel {
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-quiet);
+}
+.conceptStatSep {
+  width: 1px;
+  height: 28px;
+  background: var(--rule-strong);
+  opacity: 0.6;
+}
+
+/* ============== legacy bridge styles (no longer used) ============== */
 .sBridge {
   position: relative;
   min-height: 80vh;
@@ -862,6 +1122,25 @@
   flex-direction: column;
   gap: 12px;
   position: relative;
+  transition:
+    transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 380ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    z-index 0s linear 0s;
+  z-index: 1;
+}
+.planDay:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px -28px rgba(225, 106, 79, 0.4);
+  z-index: 2;
+}
+.planDay:hover::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid var(--coral);
+  border-radius: 4px;
+  pointer-events: none;
+  opacity: 0.6;
 }
 .planDayHead {
   display: flex;
@@ -1011,6 +1290,20 @@
   align-items: baseline;
   padding: 22px 0;
   border-bottom: 1px solid var(--rule);
+  transition: padding 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  cursor: default;
+}
+.role .roleWord,
+.role .word {
+  transition: color 320ms ease, transform 380ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.role:hover .roleWord,
+.role:hover .word {
+  color: var(--coral);
+  transform: translateX(6px);
+}
+.role:hover {
+  padding-left: 8px;
 }
 .roleWord {
   font-weight: 500;
@@ -1292,6 +1585,20 @@
   .roleNum {
     display: none;
   }
+  .conceptGrid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .conceptHeadline {
+    margin-bottom: clamp(40px, 6vh, 80px);
+  }
+  .conceptStats {
+    gap: 18px;
+    padding: 20px 22px;
+  }
+  .conceptStatSep {
+    display: none;
+  }
   .sYourTurn {
     padding: 14vh 0 12vh;
   }
@@ -1429,5 +1736,20 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+  .conceptDialog {
+    padding: 22px 18px 24px;
+  }
+  .conceptLine {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .conceptStats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .conceptStatNum {
+    font-size: 20px;
   }
 }

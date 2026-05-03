@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
-import { Bridge } from "@/components/bridge";
+import { Concept } from "@/components/concept";
 import { startMic, type MicSession } from "@/components/mic";
 import {
   playDesigner,
@@ -103,9 +103,66 @@ export function Landing() {
   const orbRef = useRef<OrbHandle>(null);
   const micRef = useRef<MicSession | null>(null);
   const designerRef = useRef<DesignerSession | null>(null);
+  const heroOrbWrapperRef = useRef<HTMLDivElement | null>(null);
+  const progressRef = useRef<HTMLDivElement | null>(null);
   const [listenState, setListenState] = useState<ListenState>("idle");
   const [designerState, setDesignerState] = useState<DesignerState>("idle");
   const [userPlan, setUserPlan] = useState<GeneratedPlan | null>(null);
+
+  // Scroll progress bar at the top of the page.
+  useEffect(() => {
+    function update() {
+      const el = progressRef.current;
+      if (!el) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      el.style.transform = `scaleX(${p})`;
+    }
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
+  // Subtle mouse parallax on the hero orb — drift up to ~10px from center.
+  useEffect(() => {
+    const wrap = heroOrbWrapperRef.current;
+    if (!wrap) return;
+    let raf = 0;
+    let targetX = 0,
+      targetY = 0;
+    let curX = 0,
+      curY = 0;
+
+    function onMove(e: MouseEvent) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      // normalized -1..1 from center
+      const nx = (e.clientX / w) * 2 - 1;
+      const ny = (e.clientY / h) * 2 - 1;
+      targetX = nx * 10;
+      targetY = ny * 10;
+    }
+
+    function tick() {
+      curX += (targetX - curX) * 0.08;
+      curY += (targetY - curY) * 0.08;
+      if (wrap) {
+        wrap.style.transform = `translate3d(${curX.toFixed(2)}px, ${curY.toFixed(2)}px, 0)`;
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -183,6 +240,7 @@ export function Landing() {
   return (
     <div className={styles.root}>
       <div className={styles.grain} />
+      <div ref={progressRef} className={styles.scrollProgress} aria-hidden="true" />
 
       <nav className={styles.nav}>
         <a className={styles.mark} href="#">
@@ -190,6 +248,7 @@ export function Landing() {
           lifedesigner
         </a>
         <div className={styles.navLinks}>
+          <a href="#concept">how</a>
           <a href="#your-turn">your turn</a>
           <a href="#plan">plan</a>
           <a href="#companion">companion</a>
@@ -220,7 +279,7 @@ export function Landing() {
             </div>
           </RevealDiv>
 
-          <div className={styles.heroOrb} aria-hidden="true">
+          <div ref={heroOrbWrapperRef} className={styles.heroOrb} aria-hidden="true">
             <OrbCanvas ref={orbRef} radius={0.3} />
             <div className={styles.orbControls}>
               <button
@@ -253,13 +312,13 @@ export function Landing() {
             </div>
           </div>
 
-          <a className={styles.scrollHint} href="#your-turn">
-            your turn
+          <a className={styles.scrollHint} href="#concept">
+            how
           </a>
         </section>
 
-        {/* ============== 02 BRIDGE — cinematic breath ============== */}
-        <Bridge />
+        {/* ============== 02 CONCEPT — explainer + sample dialogue + pillars ============== */}
+        <Concept />
 
         {/* ============== 03 YOUR TURN — interactive ============== */}
         <YourTurn orbRef={orbRef} onPlanGenerated={setUserPlan} />
