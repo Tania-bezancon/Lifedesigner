@@ -5,7 +5,14 @@ import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { Dialogue } from "@/components/dialogue";
 import { startMic, type MicSession } from "@/components/mic";
-import { playDesigner, type DesignerSession } from "@/components/designer";
+import {
+  playDesigner,
+  speakDesigner,
+  type DesignerSession,
+} from "@/components/designer";
+import { YourTurn } from "@/components/your-turn";
+import { PlanSection } from "@/components/plan-section";
+import { type GeneratedPlan } from "@/lib/generate-plan";
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
@@ -86,6 +93,7 @@ export function Landing() {
   const designerRef = useRef<DesignerSession | null>(null);
   const [listenState, setListenState] = useState<ListenState>("idle");
   const [designerState, setDesignerState] = useState<DesignerState>("idle");
+  const [userPlan, setUserPlan] = useState<GeneratedPlan | null>(null);
 
   // External (Dialogue → orb) override during the designer's turn.
   const dialogueListenRef = useRef(false);
@@ -150,16 +158,20 @@ export function Landing() {
       setListenState("idle");
     }
     setDesignerState("speaking");
+    const onLevel = (level: number) => orbRef.current?.setListen(level);
+    const onComplete = () => {
+      designerRef.current = null;
+      setDesignerState("idle");
+      orbRef.current?.setListen(dialogueListenRef.current);
+    };
     try {
-      const session = await playDesigner(
-        (level) => orbRef.current?.setListen(level),
-        () => {
-          designerRef.current = null;
-          setDesignerState("idle");
-          orbRef.current?.setListen(dialogueListenRef.current);
-        },
-      );
-      designerRef.current = session;
+      // Prefer real synthesized voice; fall back to procedural pad if SpeechSynthesis is unavailable.
+      const speech = await speakDesigner(onLevel, onComplete);
+      if (speech) {
+        designerRef.current = speech;
+      } else {
+        designerRef.current = await playDesigner(onLevel, onComplete);
+      }
     } catch {
       setDesignerState("idle");
     }
@@ -270,113 +282,11 @@ export function Landing() {
         {/* ============== 03 DIALOGUE ============== */}
         <Dialogue onDesignerListening={setDialogueListen} />
 
-        {/* ============== 04 PLAN ============== */}
-        <section className={styles.sPlan} id="plan">
-          <RevealDiv className={styles.planHead}>
-            <div>
-              <span className={styles.sectionNum}>the plan</span>
-              <h2 className={styles.display} style={{ marginTop: 16 }}>
-                this
-                <br />
-                <span className={styles.it}>week.</span>
-              </h2>
-            </div>
-            <p className={styles.planHeadRight}>
-              the designer doesn&apos;t write an essay. it renders a week — concrete,
-              modest, mindful of your monday.
-            </p>
-          </RevealDiv>
+        {/* ============== 04 YOUR TURN — interactive ============== */}
+        <YourTurn orbRef={orbRef} onPlanGenerated={setUserPlan} />
 
-          <RevealDiv className={styles.planGrid}>
-            <div className={`${styles.planDay} ${styles.today}`}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>mon</span>
-                <span className={styles.dayNum}>01</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>07:00</span>
-                <span>walk · 20 min</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>22:30</span>
-                <span>phone out of bedroom</span>
-              </div>
-            </div>
-            <div className={styles.planDay}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>tue</span>
-                <span className={styles.dayNum}>02</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>19:00</span>
-                <span>write three lines</span>
-              </div>
-            </div>
-            <div className={styles.planDay}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>wed</span>
-                <span className={styles.dayNum}>03</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>12:30</span>
-                <span>lunch with lea</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>21:00</span>
-                <span>read · 30 min</span>
-              </div>
-            </div>
-            <div className={styles.planDay}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>thu</span>
-                <span className={styles.dayNum}>04</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>07:00</span>
-                <span>walk · 20 min</span>
-              </div>
-            </div>
-            <div className={styles.planDay}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>fri</span>
-                <span className={styles.dayNum}>05</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>18:30</span>
-                <span>run · 4 km</span>
-              </div>
-            </div>
-            <div className={styles.planDay}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>sat</span>
-                <span className={styles.dayNum}>06</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>10:00</span>
-                <span>market · no list</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>—</span>
-                <span>one thing you used to love</span>
-              </div>
-            </div>
-            <div className={styles.planDay}>
-              <div className={styles.planDayHead}>
-                <span className={styles.day}>sun</span>
-                <span className={styles.dayNum}>07</span>
-              </div>
-              <div className={styles.planItem}>
-                <span className={styles.planTime}>17:00</span>
-                <span>debrief · 10 min, out loud</span>
-              </div>
-            </div>
-          </RevealDiv>
-
-          <RevealDiv className={styles.planFoot}>
-            <span className={styles.pill}>5 habits</span>
-            <span>they&apos;ll adjust with you, day by day.</span>
-          </RevealDiv>
-        </section>
+        {/* ============== 05 PLAN ============== */}
+        <PlanSection plan={userPlan} />
 
         {/* ============== 05 COMPANION ============== */}
         <section className={styles.sCompanion} id="companion">
@@ -448,6 +358,18 @@ export function Landing() {
           </RevealDiv>
           <RevealDiv className={styles.ctaFoot}>free · 7 days · no card</RevealDiv>
         </section>
+
+        {/* ============== founder note ============== */}
+        <RevealDiv className={styles.founder}>
+          <p className={styles.founderText}>
+            i built this because the productivity apps i tried treated me like a project to
+            optimize. i wanted something quieter — something that listens before it
+            suggests, and forgets to be loud.
+          </p>
+          <p className={styles.founderSign}>
+            — tania, founder · brooklyn
+          </p>
+        </RevealDiv>
       </main>
 
       <footer className={styles.footer}>
