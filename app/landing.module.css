@@ -2516,6 +2516,24 @@
     order: 2;
     margin: 0 auto;
     max-width: 420px;
+    /* lay the orb canvas above the listen pills as a column,
+       so the buttons no longer overlap the orb's halo */
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .heroOrb canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .orbControls {
+    position: static;
+    right: auto;
+    bottom: auto;
+    justify-content: center;
   }
   .heroSub {
     font-size: 16px;
@@ -2725,8 +2743,6 @@
     font-size: 11px;
   }
   .orbControls {
-    right: 12px;
-    bottom: 12px;
     gap: 8px;
   }
   .sStory,
