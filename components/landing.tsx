@@ -99,42 +99,6 @@ function LiveCounter() {
   return <span className={styles.tnum}>{n}</span>;
 }
 
-/** A large breathing orb behind the CTA headline — closes the page on the same motif as the opening. */
-function CtaBackdropOrb() {
-  const orbRef = useRef<OrbHandle>(null);
-  const wrapRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") {
-      orbRef.current?.setListen(0.5);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            // gentle swell when the section enters view
-            orbRef.current?.setListen(0.55);
-          } else {
-            orbRef.current?.setListen(0.2);
-          }
-        }
-      },
-      { threshold: 0.18 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <div ref={wrapRef} className={styles.ctaOrb} aria-hidden="true">
-      <OrbCanvas ref={orbRef} radius={0.42} />
-    </div>
-  );
-}
-
 type ListenState = "idle" | "requesting" | "live" | "denied";
 type DesignerState = "idle" | "speaking";
 
@@ -373,7 +337,6 @@ export function Landing() {
 
         {/* ============== 07 CTA ============== */}
         <section className={styles.sCta} id="cta">
-          <CtaBackdropOrb />
           <RevealH2 className={`${styles.display} ${styles.ctaHeadline}`}>
             begin
             <br />
@@ -447,12 +410,47 @@ function FooterBlock() {
         <FooterOrb />
 
         <div className={styles.footerCenter}>
+          <span className={styles.footerBadge}>concept · interface</span>
           <p className={styles.footerNote}>
-            i built this because the productivity apps i tried treated me like a project
+            this is a concept interface for the <em>lifedesigner</em> domain — an
+            exploration of what a voice-first life designer could feel like, not yet
+            a working product.
+          </p>
+          <p className={styles.footerNote}>
+            i built it because the productivity apps i tried treated me like a project
             to optimize. i wanted something quieter — something that listens before it
             suggests, and forgets to be loud.
           </p>
-          <p className={styles.footerSign}>— tania, founder · brooklyn</p>
+          <p className={styles.footerSign}>— tania bezancon, creator</p>
+          <ul className={styles.footerLinks}>
+            <li>
+              <a
+                href="https://www.linkedin.com/in/tania-bezancon/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                linkedin
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://taniabezancon.netlify.app/en"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                portfolio
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/tania-bezancon"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                github
+              </a>
+            </li>
+          </ul>
         </div>
 
         <nav className={styles.footerNav} aria-label="footer navigation">
@@ -467,7 +465,7 @@ function FooterBlock() {
       <div className={styles.footerSystem}>
         <span>presence.idle()</span>
         <FooterSession />
-        <span>© 2026 lifedesigner · brooklyn</span>
+        <span>© 2026 · concept by tania bezancon</span>
       </div>
     </footer>
   );
