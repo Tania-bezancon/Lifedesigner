@@ -7,6 +7,7 @@ import { MariaIntro } from "@/components/maria-intro";
 import { Connected } from "@/components/connected";
 import { Program } from "@/components/program";
 import { StickyOrb } from "@/components/sticky-orb";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { startMic, type MicSession } from "@/components/mic";
 import {
   playDesigner,
@@ -131,9 +132,16 @@ export function Landing() {
   }, []);
 
   // Subtle mouse parallax on the hero orb — drift up to ~10px from center.
+  // Disabled when the user prefers reduced motion.
   useEffect(() => {
     const wrap = heroOrbWrapperRef.current;
     if (!wrap) return;
+    if (
+      typeof window.matchMedia !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
     let raf = 0;
     let targetX = 0,
       targetY = 0;
@@ -256,9 +264,12 @@ export function Landing() {
           <a href="#program">program</a>
           <a href="#your-turn">your turn</a>
         </div>
-        <a className={styles.ctaMini} href="#cta">
-          begin
-        </a>
+        <div className={styles.navRight}>
+          <ThemeToggle />
+          <a className={styles.ctaMini} href="#cta">
+            begin
+          </a>
+        </div>
       </nav>
 
       <main className={styles.main}>
