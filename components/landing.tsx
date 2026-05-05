@@ -3,7 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
-import { Concept } from "@/components/concept";
+import { MariaIntro } from "@/components/maria-intro";
+import { Connected } from "@/components/connected";
+import { Program } from "@/components/program";
 import { StickyOrb } from "@/components/sticky-orb";
 import { startMic, type MicSession } from "@/components/mic";
 import {
@@ -286,10 +288,9 @@ export function Landing() {
           lifedesigner
         </a>
         <div className={styles.navLinks}>
-          <a href="#concept">how</a>
+          <a href="#maria">maria</a>
+          <a href="#program">program</a>
           <a href="#your-turn">your turn</a>
-          <a href="#plan">plan</a>
-          <a href="#companion">companion</a>
         </div>
         <a className={styles.ctaMini} href="#cta">
           begin
@@ -350,71 +351,27 @@ export function Landing() {
             </div>
           </div>
 
-          <a className={styles.scrollHint} href="#concept">
-            how
+          <a className={styles.scrollHint} href="#maria">
+            meet maria
           </a>
         </section>
 
-        {/* ============== 02 CONCEPT — explainer + sample dialogue + pillars ============== */}
-        <Concept />
+        {/* ============== 02 MARIA — meet her ============== */}
+        <MariaIntro />
 
-        {/* ============== 03 YOUR TURN — interactive ============== */}
+        {/* ============== 03 CONNECTED — the designer reads her life ============== */}
+        <Connected />
+
+        {/* ============== 04 PROGRAM — 12 weeks of micro-habits ============== */}
+        <Program />
+
+        {/* ============== 05 YOUR TURN — interactive ============== */}
         <YourTurn orbRef={orbRef} onPlanGenerated={setUserPlan} />
 
-        {/* ============== 04 PLAN ============== */}
+        {/* ============== 06 PLAN — generated for the visitor ============== */}
         <PlanSection plan={userPlan} />
 
-        {/* ============== 05 COMPANION ============== */}
-        <section className={styles.sCompanion} id="companion">
-          <div className={styles.companionHalo} aria-hidden="true" />
-          <RevealDiv className={styles.companionHead}>
-            <span className={styles.sectionNum}>the companion</span>
-            <h2 className={styles.display} style={{ marginTop: 16 }}>
-              not a
-              <br />
-              <span className={styles.it}>chatbot.</span>
-            </h2>
-            <p className={styles.quiet}>
-              the designer knows you. it remembers last time. it stays with you over time —
-              in a 360 way.
-            </p>
-          </RevealDiv>
-
-          <RevealDiv className={styles.roles}>
-            <div className={styles.role}>
-              <div className={styles.roleWord}>friend</div>
-              <div className={styles.roleDesc}>
-                laughs, listens, never judges. knows when to be quiet.
-              </div>
-              <div className={styles.roleNum}>01</div>
-            </div>
-            <div className={styles.role}>
-              <div className={styles.roleWord}>coach</div>
-              <div className={styles.roleDesc}>
-                offers a direction, steps, a pace. comes back to what you said.
-              </div>
-              <div className={styles.roleNum}>02</div>
-            </div>
-            <div className={styles.role}>
-              <div className={styles.roleWord}>confidant</div>
-              <div className={styles.roleDesc}>
-                stays between you. forgets nothing — unless you ask it to.
-              </div>
-              <div className={styles.roleNum}>03</div>
-            </div>
-            <div className={styles.role}>
-              <div className={styles.roleWord}>
-                <span className={styles.roleWordIt}>parent</span>
-              </div>
-              <div className={styles.roleDesc}>
-                reminds you to drink water, call your sister, get some sleep.
-              </div>
-              <div className={styles.roleNum}>04</div>
-            </div>
-          </RevealDiv>
-        </section>
-
-        {/* ============== 06 CTA ============== */}
+        {/* ============== 07 CTA ============== */}
         <section className={styles.sCta} id="cta">
           <CtaBackdropOrb />
           <RevealH2 className={`${styles.display} ${styles.ctaHeadline}`}>

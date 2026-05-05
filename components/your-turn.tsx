@@ -9,10 +9,10 @@ type Phase = "idle" | "thinking" | "replying" | "done";
 type Timing = { tookMs: number };
 
 const PLACEHOLDERS = [
-  "i sleep badly. i scroll until 1am.",
-  "i've lost touch with my friends.",
-  "everything feels noisy this week.",
-  "i can't get going in the morning.",
+  "i want to run 10k by september.",
+  "i want to put my phone down at 9pm.",
+  "i want one quiet hour, every morning.",
+  "i want to call my mother on sundays.",
 ];
 
 export function YourTurn({
@@ -130,15 +130,16 @@ export function YourTurn({
     <section className={styles.sYourTurn} id="your-turn">
       <div className={styles.yourTurnInner}>
         <div className={styles.yourTurnEyebrow}>
-          <span className={styles.techLabel}>presence.calibrate()</span>
+          <span className={styles.techLabel}>presence.calibrate(you)</span>
           <span className={styles.silenceMetric}>
-            the designer averages <span className={styles.tnum}>12</span> words per reply.
+            maria&apos;s 10k took 12 weeks. yours starts with one sentence.
           </span>
         </div>
 
         <h2 className={`${styles.display} ${styles.yourTurnHeadline}`}>
-          tell me<br />
-          <span className={styles.it}>one thing.</span>
+          you&apos;ve been
+          <br />
+          <span className={styles.it}>postponing one thing.</span>
         </h2>
 
         {phase === "idle" && (
