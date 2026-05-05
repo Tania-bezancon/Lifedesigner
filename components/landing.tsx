@@ -393,23 +393,82 @@ export function Landing() {
           <RevealDiv className={styles.ctaFoot}>free · 7 days · no card</RevealDiv>
         </section>
 
-        {/* ============== founder note ============== */}
-        <RevealDiv className={styles.founder}>
-          <p className={styles.founderText}>
-            i built this because the productivity apps i tried treated me like a project to
-            optimize. i wanted something quieter — something that listens before it
-            suggests, and forgets to be loud.
-          </p>
-          <p className={styles.founderSign}>
-            — tania, founder · brooklyn
-          </p>
-        </RevealDiv>
       </main>
 
-      <footer className={styles.footer}>
-        <span>lifedesigner · 2026</span>
-        <span>made slowly, in brooklyn</span>
-      </footer>
+      <FooterBlock />
     </div>
+  );
+}
+
+function FooterSession() {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const start = Date.now();
+    const t = setInterval(() => {
+      setSeconds(Math.floor((Date.now() - start) / 1000));
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return (
+    <span className={styles.tnum}>
+      session {m}m {String(s).padStart(2, "0")}s
+    </span>
+  );
+}
+
+function FooterOrb() {
+  const ref = useRef<OrbHandle>(null);
+  useEffect(() => {
+    // ambient breath — gentle, never silent
+    let raf = 0;
+    const start = performance.now();
+    function tick(now: number) {
+      const t = (now - start) * 0.001;
+      const v = 0.32 + 0.18 * (0.5 + 0.5 * Math.sin(t * 0.6));
+      ref.current?.setListen(v);
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return (
+    <div className={styles.footerOrb} aria-hidden="true">
+      <OrbCanvas ref={ref} radius={0.36} />
+    </div>
+  );
+}
+
+function FooterBlock() {
+  return (
+    <footer className={styles.footer}>
+      <div className={styles.footerInner}>
+        <FooterOrb />
+
+        <div className={styles.footerCenter}>
+          <p className={styles.footerNote}>
+            i built this because the productivity apps i tried treated me like a project
+            to optimize. i wanted something quieter — something that listens before it
+            suggests, and forgets to be loud.
+          </p>
+          <p className={styles.footerSign}>— tania, founder · brooklyn</p>
+        </div>
+
+        <nav className={styles.footerNav} aria-label="footer navigation">
+          <a href="#hero">begin again</a>
+          <a href="#maria">maria&apos;s story</a>
+          <a href="#program">the program</a>
+          <a href="#your-turn">your turn</a>
+          <a href="#cta">request access</a>
+        </nav>
+      </div>
+
+      <div className={styles.footerSystem}>
+        <span>presence.idle()</span>
+        <FooterSession />
+        <span>© 2026 lifedesigner · brooklyn</span>
+      </div>
+    </footer>
   );
 }

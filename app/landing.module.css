@@ -1792,38 +1792,109 @@
   color: var(--ink-quiet);
 }
 
-/* ---------- founder note ---------- */
-.founder {
-  max-width: 540px;
-  margin: 4vh auto 0;
-  padding: 32px 0 8vh;
-  text-align: center;
+/* ---------- footer ---------- */
+.footer {
+  position: relative;
+  margin-top: 8vh;
   border-top: 1px solid var(--rule);
+  background: var(--bg);
 }
-.founderText {
-  font-size: 16px;
+.footerInner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: clamp(28px, 5vw, 80px);
+  padding: clamp(48px, 7vh, 80px) var(--gutter) clamp(36px, 5vh, 56px);
+  max-width: var(--maxw);
+  margin: 0 auto;
+  align-items: start;
+}
+.footerOrb {
+  width: 92px;
+  height: 92px;
+  position: relative;
+  flex: 0 0 auto;
+}
+.footerOrb canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.footerCenter {
+  max-width: 46ch;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 4px;
+}
+.footerNote {
+  font-size: 15px;
   line-height: 1.6;
   color: var(--ink-soft);
-  margin: 24px 0 18px;
+  margin: 0;
   letter-spacing: -0.005em;
 }
-.founderSign {
-  font-size: 12px;
-  letter-spacing: 0.18em;
+.footerSign {
+  font-size: 11px;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ink-quiet);
   margin: 0;
 }
-
-.footer {
-  padding: 60px var(--gutter) 40px;
-  border-top: 1px solid var(--rule);
-  margin-top: 6vh;
+.footerNav {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  letter-spacing: -0.005em;
+  color: var(--ink-soft);
+  padding-top: 4px;
+}
+.footerNav a {
+  position: relative;
+  transition:
+    color 240ms ease,
+    transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  display: inline-block;
+}
+.footerNav a::before {
+  content: "→";
+  display: inline-block;
+  width: 0;
+  margin-right: 0;
+  opacity: 0;
+  color: var(--coral);
+  transition:
+    width 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    margin-right 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 240ms ease;
+  overflow: hidden;
+}
+.footerNav a:hover {
+  color: var(--ink);
+}
+.footerNav a:hover::before {
+  width: 16px;
+  margin-right: 8px;
+  opacity: 1;
+}
+.footerSystem {
+  display: flex;
   justify-content: space-between;
-  font-size: 12px;
+  align-items: center;
+  gap: 18px;
+  padding: 16px var(--gutter);
+  border-top: 1px solid var(--rule);
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
   color: var(--ink-quiet);
+  font-feature-settings: "tnum";
+  flex-wrap: wrap;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+.footerSystem span {
+  text-transform: lowercase;
 }
 
 /* ---------- mini orb in YourTurn input ---------- */
@@ -2091,6 +2162,36 @@
     margin-top: 4px;
     color: var(--ink-soft);
   }
+  .footerInner {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 32px;
+  }
+  .footerOrb {
+    grid-column: 1;
+    grid-row: 1;
+    width: 80px;
+    height: 80px;
+  }
+  .footerCenter {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .footerNav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding-top: 0;
+    border-top: 1px dashed var(--rule);
+    margin-top: 4px;
+    padding-top: 24px;
+  }
+  .footerNav a:hover::before {
+    width: 12px;
+    margin-right: 6px;
+  }
   .programWeek {
     grid-template-columns: clamp(72px, 14vw, 110px) 1fr;
     gap: 24px;
@@ -2230,19 +2331,39 @@
     width: 100%;
     text-align: center;
   }
-  .footer {
+  .footerInner {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 28px;
+    padding: 40px var(--gutter) 28px;
+  }
+  .footerOrb {
+    grid-column: 1;
+    grid-row: 1;
+    width: 72px;
+    height: 72px;
+  }
+  .footerCenter {
+    grid-column: 1;
+    grid-row: 2;
+    max-width: 100%;
+  }
+  .footerNote {
+    font-size: 14.5px;
+  }
+  .footerNav {
+    grid-column: 1;
+    grid-row: 3;
     flex-direction: column;
-    gap: 6px;
+    gap: 12px;
+    border-top: 1px dashed var(--rule);
+    padding-top: 22px;
+  }
+  .footerSystem {
+    flex-direction: column;
     align-items: flex-start;
-    padding: 40px var(--gutter) 32px;
-  }
-  .founder {
-    padding: 28px 0 6vh;
-    margin-top: 2vh;
-  }
-  .founderText {
-    font-size: 15px;
-    margin: 22px 0 16px;
+    gap: 6px;
+    padding: 18px var(--gutter) 24px;
   }
   .planSave {
     margin-left: 0;
