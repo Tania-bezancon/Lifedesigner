@@ -232,7 +232,12 @@ const en = {
   footerSysCopyright: "© 2026 · concept by tania bezancon",
 } as const;
 
-const fr: typeof en = {
+// FR is typed as Record<keyof typeof en, string> rather than `typeof en`
+// so that any string value is allowed (typeof en after `as const` would
+// require each value to match the EN literal exactly). The keys still
+// have to match EN exhaustively — missing or extra keys are caught at
+// compile time.
+const fr: Record<keyof typeof en, string> = {
   // nav
   navMaria: "maria",
   navRuntime: "runtime",
