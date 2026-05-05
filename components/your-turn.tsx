@@ -4,16 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { generatePlan, type GeneratedPlan } from "@/lib/generate-plan";
+import { useI18n, useT } from "@/lib/i18n";
 
 type Phase = "idle" | "thinking" | "replying" | "done";
 type Timing = { tookMs: number };
 
-const PLACEHOLDERS = [
-  "i want to run 10k by september.",
-  "i want to put my phone down at 9pm.",
-  "i want one quiet hour, every morning.",
-  "i want to call my mother on sundays.",
-];
+const PLACEHOLDER_KEYS = [
+  "yourTurnPlaceholder1",
+  "yourTurnPlaceholder2",
+  "yourTurnPlaceholder3",
+  "yourTurnPlaceholder4",
+] as const;
 
 export function YourTurn({
   orbRef,
@@ -22,6 +23,8 @@ export function YourTurn({
   orbRef: React.RefObject<OrbHandle>;
   onPlanGenerated: (plan: GeneratedPlan) => void;
 }) {
+  const t = useT();
+  const { lang } = useI18n();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const miniOrbRef = useRef<OrbHandle>(null);
   const typingPulseRef = useRef(0);
@@ -30,7 +33,8 @@ export function YourTurn({
   const [phase, setPhase] = useState<Phase>("idle");
   const [reply, setReply] = useState<string[]>([]);
   const [typing, setTyping] = useState<string>("");
-  const [placeholder, setPlaceholder] = useState(PLACEHOLDERS[0]);
+  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const placeholder = t(PLACEHOLDER_KEYS[placeholderIdx]);
   const [submittedIntent, setSubmittedIntent] = useState("");
   const [timing, setTiming] = useState<Timing | null>(null);
   const generatedRef = useRef<GeneratedPlan | null>(null);
@@ -58,13 +62,10 @@ export function YourTurn({
   // Rotate placeholder on idle every few seconds for life.
   useEffect(() => {
     if (phase !== "idle") return;
-    const t = setInterval(() => {
-      setPlaceholder((p) => {
-        const idx = PLACEHOLDERS.indexOf(p);
-        return PLACEHOLDERS[(idx + 1) % PLACEHOLDERS.length];
-      });
+    const i = setInterval(() => {
+      setPlaceholderIdx((p) => (p + 1) % PLACEHOLDER_KEYS.length);
     }, 4200);
-    return () => clearInterval(t);
+    return () => clearInterval(i);
   }, [phase]);
 
   async function submit() {
@@ -79,7 +80,7 @@ export function YourTurn({
     // "designing" pause — long enough to feel intentional, short enough not to bore.
     await new Promise((r) => setTimeout(r, 1700));
 
-    const generated = generatePlan(text);
+    const generated = generatePlan(text, lang);
     generatedRef.current = generated;
     setTiming({ tookMs: Math.round(performance.now() - t0) });
     setPhase("replying");
@@ -130,16 +131,16 @@ export function YourTurn({
     <section className={styles.sYourTurn} id="your-turn">
       <div className={styles.yourTurnInner}>
         <div className={styles.yourTurnEyebrow}>
-          <span className={styles.techLabel}>presence.calibrate(you)</span>
+          <span className={styles.techLabel}>{t("yourTurnTechLabel")}</span>
           <span className={styles.silenceMetric}>
-            maria&apos;s 10k took 12 weeks. yours starts with one sentence.
+            {t("yourTurnSilenceMetric")}
           </span>
         </div>
 
         <h2 className={`${styles.display} ${styles.yourTurnHeadline}`}>
-          you&apos;ve been
+          {t("yourTurnHeadline1")}
           <br />
-          <span className={styles.it}>postponing one thing.</span>
+          <span className={styles.it}>{t("yourTurnHeadline2")}</span>
         </h2>
 
         {phase === "idle" && (
@@ -158,7 +159,7 @@ export function YourTurn({
               }}
               onKeyDown={onKey}
               maxLength={140}
-              aria-label="tell the designer one thing about your week"
+              aria-label={t("yourTurnInputAria")}
             />
             <button
               type="button"
@@ -166,7 +167,7 @@ export function YourTurn({
               onClick={submit}
               disabled={!input.trim()}
             >
-              press enter
+              {t("yourTurnPressEnter")}
               <span className={styles.yourTurnArrow} aria-hidden="true">↵</span>
             </button>
           </div>
@@ -175,13 +176,13 @@ export function YourTurn({
         {phase !== "idle" && (
           <div className={styles.yourTurnSession}>
             <div className={styles.yourTurnYou}>
-              <span className={styles.yourTurnLabel}>you</span>
+              <span className={styles.yourTurnLabel}>{t("yourTurnLabelYou")}</span>
               <p className={styles.yourTurnYourText}>{submittedIntent}</p>
             </div>
 
             <div className={styles.yourTurnDesigner}>
               <span className={`${styles.yourTurnLabel} ${styles.yourTurnLabelDes}`}>
-                the designer
+                {t("yourTurnLabelDesigner")}
               </span>
               <div className={styles.yourTurnReply}>
                 {phase === "thinking" && (
@@ -208,19 +209,19 @@ export function YourTurn({
             {phase === "done" && (
               <div className={styles.yourTurnFoot}>
                 <span className={styles.yourTurnSysline}>
-                  archetype:{" "}
+                  {t("yourTurnSysArchetype")}:{" "}
                   <span className={styles.tnum}>{generatedRef.current?.archetype}</span>
                   {" · "}
-                  rendered in{" "}
+                  {t("yourTurnSysRendered")}{" "}
                   <span className={styles.tnum}>
                     {timing ? `${(timing.tookMs / 1000).toFixed(2)}s` : "—"}
                   </span>
                 </span>
                 <span className={styles.yourTurnFootHint}>
-                  ↓ your week, just below
+                  {t("yourTurnFootHint")}
                 </span>
                 <button type="button" className={styles.yourTurnReset} onClick={reset}>
-                  start over
+                  {t("yourTurnReset")}
                 </button>
               </div>
             )}

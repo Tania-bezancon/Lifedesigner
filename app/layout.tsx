@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight } from "next/font/google";
+import { I18nProvider } from "@/lib/i18n";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -57,9 +58,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// Pre-paint theme script: avoids the white-flash before the user's saved
-// preference is read. Runs synchronously in the head before first render.
-const themeInitScript = `
+// Pre-paint theme + lang script: avoids flashes before stored preferences
+// are read. Runs synchronously in the head before first render.
+const initScript = `
 (function() {
   try {
     var stored = localStorage.getItem('ld-theme');
@@ -68,6 +69,15 @@ const themeInitScript = `
     document.documentElement.setAttribute('data-theme', theme);
   } catch (e) {
     document.documentElement.setAttribute('data-theme', 'light');
+  }
+  try {
+    var storedLang = localStorage.getItem('ld-lang');
+    var browserLang = (navigator.language || 'en').toLowerCase();
+    var lang = storedLang || (browserLang.indexOf('fr') === 0 ? 'fr' : 'en');
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.setAttribute('lang', lang);
+  } catch (e) {
+    document.documentElement.setAttribute('data-lang', 'en');
   }
 })();
 `;
@@ -81,11 +91,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <head>
         <script
-          // biome-ignore lint/security/noDangerouslySetInnerHtml: theme init must run before paint
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: theme + lang init must run before paint
+          dangerouslySetInnerHTML={{ __html: initScript }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <I18nProvider>{children}</I18nProvider>
+      </body>
     </html>
   );
 }

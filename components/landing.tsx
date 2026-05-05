@@ -8,6 +8,8 @@ import { Connected } from "@/components/connected";
 import { Program } from "@/components/program";
 import { StickyOrb } from "@/components/sticky-orb";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LangToggle } from "@/components/lang-toggle";
+import { useT } from "@/lib/i18n";
 import { startMic, type MicSession } from "@/components/mic";
 import {
   playDesigner,
@@ -104,6 +106,7 @@ type ListenState = "idle" | "requesting" | "live" | "denied";
 type DesignerState = "idle" | "speaking";
 
 export function Landing() {
+  const t = useT();
   const orbRef = useRef<OrbHandle>(null);
   const micRef = useRef<MicSession | null>(null);
   const designerRef = useRef<DesignerSession | null>(null);
@@ -260,14 +263,15 @@ export function Landing() {
           lifedesigner
         </a>
         <div className={styles.navLinks}>
-          <a href="#maria">maria</a>
-          <a href="#program">program</a>
-          <a href="#your-turn">your turn</a>
+          <a href="#maria">{t("navMaria")}</a>
+          <a href="#program">{t("navProgram")}</a>
+          <a href="#your-turn">{t("navYourTurn")}</a>
         </div>
         <div className={styles.navRight}>
+          <LangToggle />
           <ThemeToggle />
           <a className={styles.ctaMini} href="#cta">
-            begin
+            {t("navBegin")}
           </a>
         </div>
       </nav>
@@ -277,18 +281,15 @@ export function Landing() {
         <section className={styles.hero} id="hero">
           <RevealDiv className={styles.heroCopy}>
             <h1 className={styles.display}>
-              your life,
+              {t("heroTitle1")}
               <br />
-              <span className={styles.it}>redesigned with you.</span>
+              <span className={styles.it}>{t("heroTitle2")}</span>
             </h1>
-            <p className={styles.heroSub}>
-              a quiet, voice-first companion that listens, remembers, and helps you build the
-              week you actually want.
-            </p>
+            <p className={styles.heroSub}>{t("heroSub")}</p>
             <div className={styles.heroMeta}>
               <span className={styles.pip} aria-hidden="true" />
               <span>
-                private beta · <LiveCounter /> weeks redesigned this hour
+                {t("heroMetaPrefix")} · <LiveCounter /> {t("heroMetaSuffix")}
               </span>
             </div>
           </RevealDiv>
@@ -303,7 +304,7 @@ export function Landing() {
                 onClick={toggleHear}
               >
                 <span className={styles.listenDot} />
-                <span>{speaking ? "speaking" : "hear"}</span>
+                <span>{speaking ? t("heroHearActive") : t("heroHear")}</span>
               </button>
               <button
                 type="button"
@@ -315,19 +316,19 @@ export function Landing() {
                 <span className={styles.listenDot} />
                 <span>
                   {listenState === "requesting"
-                    ? "asking…"
+                    ? t("heroListenAsking")
                     : listenState === "live"
-                      ? "listening"
+                      ? t("heroListenActive")
                       : listenState === "denied"
-                        ? "listen (no mic)"
-                        : "listen"}
+                        ? t("heroListenDenied")
+                        : t("heroListen")}
                 </span>
               </button>
             </div>
           </div>
 
           <a className={styles.scrollHint} href="#maria">
-            meet maria
+            {t("heroScrollHint")}
           </a>
         </section>
 
@@ -349,22 +350,20 @@ export function Landing() {
         {/* ============== 07 CTA ============== */}
         <section className={styles.sCta} id="cta">
           <RevealH2 className={`${styles.display} ${styles.ctaHeadline}`}>
-            begin
+            {t("ctaHeadline1")}
             <br />
-            <span className={styles.it}>monday.</span>
+            <span className={styles.it}>{t("ctaHeadline2")}</span>
           </RevealH2>
-          <RevealP className={styles.ctaSub}>
-            a conversation. your first plan. then you decide.
-          </RevealP>
+          <RevealP className={styles.ctaSub}>{t("ctaSub")}</RevealP>
           <RevealDiv className={styles.ctaRow}>
             <a href="#" className={`${styles.btn} ${styles.btnPrimary}`}>
-              request access
+              {t("ctaPrimary")}
             </a>
             <a href="#hero" className={`${styles.btn} ${styles.btnGhost}`}>
-              back to top
+              {t("ctaSecondary")}
             </a>
           </RevealDiv>
-          <RevealDiv className={styles.ctaFoot}>free · 7 days · no card</RevealDiv>
+          <RevealDiv className={styles.ctaFoot}>{t("ctaFoot")}</RevealDiv>
         </section>
 
       </main>
@@ -375,19 +374,20 @@ export function Landing() {
 }
 
 function FooterSession() {
+  const t = useT();
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
     const start = Date.now();
-    const t = setInterval(() => {
+    const i = setInterval(() => {
       setSeconds(Math.floor((Date.now() - start) / 1000));
     }, 1000);
-    return () => clearInterval(t);
+    return () => clearInterval(i);
   }, []);
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
   return (
     <span className={styles.tnum}>
-      session {m}m {String(s).padStart(2, "0")}s
+      {t("footerSysSession")} {m}m {String(s).padStart(2, "0")}s
     </span>
   );
 }
@@ -415,24 +415,17 @@ function FooterOrb() {
 }
 
 function FooterBlock() {
+  const t = useT();
   return (
     <footer className={styles.footer}>
       <div className={styles.footerInner}>
         <FooterOrb />
 
         <div className={styles.footerCenter}>
-          <span className={styles.footerBadge}>concept · interface</span>
-          <p className={styles.footerNote}>
-            this is a concept interface for the <em>lifedesigner</em> domain — an
-            exploration of what a voice-first life designer could feel like, not yet
-            a working product.
-          </p>
-          <p className={styles.footerNote}>
-            i built it because the productivity apps i tried treated me like a project
-            to optimize. i wanted something quieter — something that listens before it
-            suggests, and forgets to be loud.
-          </p>
-          <p className={styles.footerSign}>— tania bezancon, creator</p>
+          <span className={styles.footerBadge}>{t("footerBadge")}</span>
+          <p className={styles.footerNote}>{t("footerNote1")}</p>
+          <p className={styles.footerNote}>{t("footerNote2")}</p>
+          <p className={styles.footerSign}>{t("footerSign")}</p>
           <ul className={styles.footerLinks}>
             <li>
               <a
@@ -440,7 +433,7 @@ function FooterBlock() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                linkedin
+                {t("footerLinkLinkedin")}
               </a>
             </li>
             <li>
@@ -449,7 +442,7 @@ function FooterBlock() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                portfolio
+                {t("footerLinkPortfolio")}
               </a>
             </li>
             <li>
@@ -458,25 +451,25 @@ function FooterBlock() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                github
+                {t("footerLinkGithub")}
               </a>
             </li>
           </ul>
         </div>
 
         <nav className={styles.footerNav} aria-label="footer navigation">
-          <a href="#hero">begin again</a>
-          <a href="#maria">maria&apos;s story</a>
-          <a href="#program">the program</a>
-          <a href="#your-turn">your turn</a>
-          <a href="#cta">request access</a>
+          <a href="#hero">{t("footerNavBeginAgain")}</a>
+          <a href="#maria">{t("footerNavMaria")}</a>
+          <a href="#program">{t("footerNavProgram")}</a>
+          <a href="#your-turn">{t("footerNavYourTurn")}</a>
+          <a href="#cta">{t("footerNavCta")}</a>
         </nav>
       </div>
 
       <div className={styles.footerSystem}>
-        <span>presence.idle()</span>
+        <span>{t("footerSysIdle")}</span>
         <FooterSession />
-        <span>© 2026 · concept by tania bezancon</span>
+        <span>{t("footerSysCopyright")}</span>
       </div>
     </footer>
   );

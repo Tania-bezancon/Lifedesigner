@@ -4,10 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { DEFAULT_PLAN, type GeneratedPlan } from "@/lib/generate-plan";
 import { downloadPlanCard } from "@/lib/share-card";
+import { useI18n, useT } from "@/lib/i18n";
 
 export function PlanSection({ plan }: { plan: GeneratedPlan | null }) {
+  const t = useT();
+  const { lang } = useI18n();
   const isUser = plan != null;
-  const days = plan ? plan.days : DEFAULT_PLAN.days;
+  const days = plan ? plan.days : DEFAULT_PLAN[lang].days;
   const sectionRef = useRef<HTMLElement | null>(null);
   const [revealedCount, setRevealedCount] = useState(isUser ? 0 : days.length);
   const [headInView, setHeadInView] = useState(false);
@@ -78,26 +81,26 @@ export function PlanSection({ plan }: { plan: GeneratedPlan | null }) {
       >
         <div>
           <span className={styles.techLabel}>
-            {isUser ? "week.render(you)" : "week.render(default)"}
+            {isUser ? t("planTechLabelUser") : t("planTechLabelDefault")}
           </span>
           <h2 className={styles.display} style={{ marginTop: 16 }}>
             {isUser ? (
               <>
-                this<br />
-                <span className={styles.it}>week, for you.</span>
+                {t("planHeadlineUser1")}
+                <br />
+                <span className={styles.it}>{t("planHeadlineUser2")}</span>
               </>
             ) : (
               <>
-                this<br />
-                <span className={styles.it}>week.</span>
+                {t("planHeadlineDefault1")}
+                <br />
+                <span className={styles.it}>{t("planHeadlineDefault2")}</span>
               </>
             )}
           </h2>
         </div>
         <p className={styles.planHeadRight}>
-          {isUser
-            ? "modest. concrete. you can change one thing at any time, the rest will adjust."
-            : "the designer doesn't write an essay. it renders a week — concrete, modest, mindful of your monday."}
+          {isUser ? t("planRightUser") : t("planRightDefault")}
         </p>
       </div>
 
@@ -136,18 +139,16 @@ export function PlanSection({ plan }: { plan: GeneratedPlan | null }) {
           <span className={styles.tnum}>
             {days.reduce((acc, d) => acc + d.items.length, 0)}
           </span>{" "}
-          actions
+          {t("planFootActions")}
         </span>
-        <span className={styles.planFootMsg}>
-          they&apos;ll adjust with you, day by day.
-        </span>
+        <span className={styles.planFootMsg}>{t("planFootMsg")}</span>
         {isUser && (
           <button
             type="button"
             className={styles.planSave}
             onClick={() => plan && downloadPlanCard(plan)}
           >
-            save this week ↓
+            {t("planSave")}
           </button>
         )}
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import styles from "@/app/landing.module.css";
+import { useT } from "@/lib/i18n";
 
 type Theme = "light" | "dark";
 
@@ -10,6 +11,7 @@ type Theme = "light" | "dark";
  * lets the user toggle it, and persists the choice in localStorage.
  */
 export function ThemeToggle() {
+  const t = useT();
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
@@ -48,8 +50,8 @@ export function ThemeToggle() {
       type="button"
       className={styles.themeToggle}
       onClick={toggle}
-      aria-label={theme === "dark" ? "switch to light mode" : "switch to dark mode"}
-      title={theme === "dark" ? "switch to light mode" : "switch to dark mode"}
+      aria-label={theme === "dark" ? t("navThemeToLight") : t("navThemeToDark")}
+      title={theme === "dark" ? t("navThemeToLight") : t("navThemeToDark")}
     >
       {theme === "dark" ? (
         // sun glyph

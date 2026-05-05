@@ -129,11 +129,52 @@
   color: var(--bg);
 }
 
-/* nav right cluster — theme toggle + cta */
+/* nav right cluster — language + theme + cta */
 .navRight {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+}
+
+/* language toggle pill */
+.langToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-glass-soft);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 240ms ease,
+    background 240ms ease;
+}
+.langToggle:hover {
+  border-color: var(--coral);
+}
+.langToggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(225, 106, 79, 0.3);
+}
+.langToggleSlot {
+  transition: color 240ms ease;
+}
+.langToggleSlotActive {
+  color: var(--coral);
+}
+.langToggleSlotInactive {
+  color: var(--ink-quiet);
+}
+.langToggleSep {
+  color: var(--ink-quiet);
+  opacity: 0.5;
 }
 
 /* theme toggle */
@@ -512,7 +553,7 @@
 }
 .integrationGrid {
   list-style: none;
-  margin: 0 0 clamp(48px, 7vh, 96px);
+  margin: 0 0 clamp(40px, 6vh, 72px);
   padding: 0;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -525,9 +566,9 @@
 .integration {
   display: grid;
   grid-template-columns: auto auto 1fr;
-  align-items: baseline;
+  align-items: start;
   gap: 14px;
-  padding: 22px 24px;
+  padding: 20px 22px;
   background: var(--paper);
 }
 .integrationDot {
@@ -535,8 +576,8 @@
   height: 8px;
   border-radius: 50%;
   display: inline-block;
-  align-self: center;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+  margin-top: 8px;
+  box-shadow: 0 0 0 2px var(--paper);
 }
 .integrationName {
   font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
@@ -545,12 +586,84 @@
   color: var(--ink);
   text-transform: lowercase;
   font-weight: 500;
+  margin-top: 4px;
 }
-.integrationReading {
+.integrationStream {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.integrationStreamRow {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+.integrationStreamLabel {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-quiet);
+}
+.integrationStreamLabelWrite {
+  color: var(--coral);
+}
+.integrationStreamText {
   font-size: 12.5px;
   color: var(--ink-soft);
   letter-spacing: -0.005em;
   font-feature-settings: "tnum";
+  line-height: 1.4;
+}
+.integrationStreamTextWrite {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* actions taken list */
+.connectedActions {
+  margin-bottom: clamp(48px, 7vh, 96px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.connectedActionsLabel {
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--coral);
+}
+.connectedActionsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.connectedActionsList li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+.connectedActionDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 8px var(--coral);
+  animation: pip 2.4s ease-in-out infinite;
 }
 .connectedAsk {
   display: flex;
@@ -2280,13 +2393,8 @@
   }
   .integration {
     padding: 18px 20px;
-    grid-template-columns: auto 1fr;
-    gap: 12px;
-  }
-  .integration .integrationReading {
-    grid-column: 1 / -1;
-    margin-top: 4px;
-    color: var(--ink-soft);
+    grid-template-columns: auto auto 1fr;
+    gap: 10px;
   }
   .footerInner {
     grid-template-columns: auto 1fr;

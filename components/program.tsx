@@ -2,84 +2,86 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
+import { useT } from "@/lib/i18n";
+import type { DictKey } from "@/lib/i18n/dictionaries";
 
-type Habit = { time: string; text: string };
-type Week = {
-  num: string;
-  goal: string;
-  distance: string;
-  milestone?: string;
-  habits: Habit[];
-};
+type WeekKey = "01" | "03" | "05" | "07" | "10" | "12";
 
-const WEEKS: Week[] = [
+const WEEKS: ReadonlyArray<{
+  num: WeekKey;
+  goalKey: DictKey;
+  distKey: DictKey;
+  milestoneKey?: DictKey;
+  habits: { timeKey: DictKey; textKey: DictKey }[];
+}> = [
   {
     num: "01",
-    goal: "show up",
-    distance: "1 km",
-    milestone: "first walk",
+    goalKey: "programWeek01Goal",
+    distKey: "programWeek01Distance",
+    milestoneKey: "programWeek01Milestone",
     habits: [
-      { time: "mon · 06:42", text: "1 km walk · 12 min" },
-      { time: "wed · 22:30", text: "phone out of the bedroom" },
-      { time: "sat · 09:00", text: "1 km walk · same loop" },
+      { timeKey: "programWeek01Habit1Time", textKey: "programWeek01Habit1Text" },
+      { timeKey: "programWeek01Habit2Time", textKey: "programWeek01Habit2Text" },
+      { timeKey: "programWeek01Habit3Time", textKey: "programWeek01Habit3Text" },
     ],
   },
   {
     num: "03",
-    goal: "warm up",
-    distance: "2 km",
+    goalKey: "programWeek03Goal",
+    distKey: "programWeek03Distance",
     habits: [
-      { time: "mon · 06:38", text: "2 km · slow + steady" },
-      { time: "wed · 12:30", text: "phone-free lunch · 28 min" },
-      { time: "sat · 08:30", text: "2 km · breathe through your nose" },
+      { timeKey: "programWeek03Habit1Time", textKey: "programWeek03Habit1Text" },
+      { timeKey: "programWeek03Habit2Time", textKey: "programWeek03Habit2Text" },
+      { timeKey: "programWeek03Habit3Time", textKey: "programWeek03Habit3Text" },
     ],
   },
   {
     num: "05",
-    goal: "first run",
-    distance: "3 km",
-    milestone: "first jog",
+    goalKey: "programWeek05Goal",
+    distKey: "programWeek05Distance",
+    milestoneKey: "programWeek05Milestone",
     habits: [
-      { time: "mon · 06:30", text: "3 km · run/walk intervals" },
-      { time: "thu · 06:30", text: "3 km · same pace" },
-      { time: "sat · 08:00", text: "3 km · cold shower after" },
+      { timeKey: "programWeek05Habit1Time", textKey: "programWeek05Habit1Text" },
+      { timeKey: "programWeek05Habit2Time", textKey: "programWeek05Habit2Text" },
+      { timeKey: "programWeek05Habit3Time", textKey: "programWeek05Habit3Text" },
     ],
   },
   {
     num: "07",
-    goal: "build base",
-    distance: "5 km",
-    milestone: "first 5k",
+    goalKey: "programWeek07Goal",
+    distKey: "programWeek07Distance",
+    milestoneKey: "programWeek07Milestone",
     habits: [
-      { time: "mon · 06:30", text: "5 km · easy" },
-      { time: "wed · 06:30", text: "4 km · slightly faster" },
-      { time: "sat · 07:30", text: "5 km · race-pace last km" },
+      { timeKey: "programWeek07Habit1Time", textKey: "programWeek07Habit1Text" },
+      { timeKey: "programWeek07Habit2Time", textKey: "programWeek07Habit2Text" },
+      { timeKey: "programWeek07Habit3Time", textKey: "programWeek07Habit3Text" },
     ],
   },
   {
     num: "10",
-    goal: "stretch",
-    distance: "8 km",
+    goalKey: "programWeek10Goal",
+    distKey: "programWeek10Distance",
     habits: [
-      { time: "mon · 06:30", text: "5 km · controlled breath" },
-      { time: "wed · 06:30", text: "6 km · with hills" },
-      { time: "sat · 07:00", text: "8 km · long run" },
+      { timeKey: "programWeek10Habit1Time", textKey: "programWeek10Habit1Text" },
+      { timeKey: "programWeek10Habit2Time", textKey: "programWeek10Habit2Text" },
+      { timeKey: "programWeek10Habit3Time", textKey: "programWeek10Habit3Text" },
     ],
   },
   {
     num: "12",
-    goal: "race day",
-    distance: "10 km",
-    milestone: "10k done",
+    goalKey: "programWeek12Goal",
+    distKey: "programWeek12Distance",
+    milestoneKey: "programWeek12Milestone",
     habits: [
-      { time: "mon · 06:30", text: "4 km · fresh legs" },
-      { time: "wed · 06:30", text: "5 km · last tune-up" },
-      { time: "sat · 06:30", text: "10 km · saturday morning, race-pace" },
+      { timeKey: "programWeek12Habit1Time", textKey: "programWeek12Habit1Text" },
+      { timeKey: "programWeek12Habit2Time", textKey: "programWeek12Habit2Text" },
+      { timeKey: "programWeek12Habit3Time", textKey: "programWeek12Habit3Text" },
     ],
   },
 ];
 
 export function Program() {
+  const t = useT();
   const sectionRef = useRef<HTMLElement | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [revealedCount, setRevealedCount] = useState(0);
@@ -124,10 +126,10 @@ export function Program() {
   return (
     <section ref={sectionRef} className={styles.sProgram} id="program">
       <div className={styles.programHead}>
-        <span className={styles.techLabel}>week.render(maria, goal=10k)</span>
+        <span className={styles.techLabel}>{t("programTechLabel")}</span>
         <span className={styles.programLegend}>
-          <span className={styles.tnum}>12</span> weeks · 36 micro-habits ·
-          fitted to her calendar
+          <span className={styles.tnum}>{t("programLegendPrefix")}</span>{" "}
+          {t("programLegendSuffix")}
         </span>
       </div>
 
@@ -136,9 +138,9 @@ export function Program() {
           revealed ? styles.in : styles.reveal
         }`}
       >
-        twelve weeks,
+        {t("programHeadline1")}
         <br />
-        <span className={styles.it}>thirty-six small things.</span>
+        <span className={styles.it}>{t("programHeadline2")}</span>
       </h2>
 
       <p
@@ -147,10 +149,7 @@ export function Program() {
         }`}
         style={{ transitionDelay: "200ms" }}
       >
-        the designer didn&apos;t prescribe a training plan. it slipped
-        micro-habits into her existing calendar — same wake-up,
-        same lunch break, same saturday — until ten kilometers
-        became something her week already knew how to hold.
+        {t("programIntro")}
       </p>
 
       <ol className={styles.programTimeline}>
@@ -163,21 +162,21 @@ export function Program() {
           >
             <div className={styles.programWeekHead}>
               <span className={styles.programWeekNum}>
-                week <span className={styles.tnum}>{w.num}</span>
+                {t("programWeek")} <span className={styles.tnum}>{w.num}</span>
               </span>
-              <span className={styles.programWeekGoal}>{w.goal}</span>
-              <span className={styles.programWeekDist}>{w.distance}</span>
-              {w.milestone && (
+              <span className={styles.programWeekGoal}>{t(w.goalKey)}</span>
+              <span className={styles.programWeekDist}>{t(w.distKey)}</span>
+              {w.milestoneKey && (
                 <span className={styles.programWeekMilestone}>
-                  · {w.milestone}
+                  · {t(w.milestoneKey)}
                 </span>
               )}
             </div>
             <ul className={styles.programWeekHabits}>
               {w.habits.map((h, j) => (
                 <li key={j} className={styles.programHabit}>
-                  <span className={styles.programHabitTime}>{h.time}</span>
-                  <span className={styles.programHabitText}>{h.text}</span>
+                  <span className={styles.programHabitTime}>{t(h.timeKey)}</span>
+                  <span className={styles.programHabitText}>{t(h.textKey)}</span>
                 </li>
               ))}
             </ul>
@@ -191,11 +190,8 @@ export function Program() {
         }`}
         style={{ transitionDelay: "600ms" }}
       >
-        <span className={styles.programFootChip}>maria · saturday, week 12</span>
-        <span className={styles.programFootMsg}>
-          ran ten kilometers without stopping. her saturday morning was
-          back. nothing else in her week had changed.
-        </span>
+        <span className={styles.programFootChip}>{t("programFootChip")}</span>
+        <span className={styles.programFootMsg}>{t("programFootMsg")}</span>
       </div>
     </section>
   );

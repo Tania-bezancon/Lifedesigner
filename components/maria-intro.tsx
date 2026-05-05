@@ -2,15 +2,32 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
-
-const STATS = [
-  { label: "average bedtime", value: "12:43", trend: "+1h47 vs january" },
-  { label: "last 5k", value: "2 years", trend: "since the move" },
-  { label: "slack active", value: "14h / day", trend: "peaks at 22:00" },
-  { label: "saturday mornings", value: "in bed", trend: "8 weeks running" },
-];
+import { useT } from "@/lib/i18n";
 
 export function MariaIntro() {
+  const t = useT();
+  const STATS = [
+    {
+      label: t("mariaStat1Label"),
+      value: t("mariaStat1Value"),
+      trend: t("mariaStat1Trend"),
+    },
+    {
+      label: t("mariaStat2Label"),
+      value: t("mariaStat2Value"),
+      trend: t("mariaStat2Trend"),
+    },
+    {
+      label: t("mariaStat3Label"),
+      value: t("mariaStat3Value"),
+      trend: t("mariaStat3Trend"),
+    },
+    {
+      label: t("mariaStat4Label"),
+      value: t("mariaStat4Value"),
+      trend: t("mariaStat4Trend"),
+    },
+  ];
   const sectionRef = useRef<HTMLElement | null>(null);
   const [revealed, setRevealed] = useState(false);
 
@@ -39,11 +56,8 @@ export function MariaIntro() {
   return (
     <section ref={sectionRef} className={styles.sMaria} id="maria">
       <div className={styles.mariaHead}>
-        <span className={styles.techLabel}>case.001</span>
-        <span className={styles.mariaMeta}>
-          maria · <span className={styles.tnum}>31</span> · brooklyn ·
-          product designer
-        </span>
+        <span className={styles.techLabel}>{t("mariaCaseLabel")}</span>
+        <span className={styles.mariaMeta}>{t("mariaMeta")}</span>
       </div>
 
       <div className={styles.mariaGrid}>
@@ -53,17 +67,13 @@ export function MariaIntro() {
           }`}
         >
           <h2 className={`${styles.display} ${styles.mariaQuoteHeadline}`}>
-            she lost
+            {t("mariaHeadline1")}
             <br />
-            <span className={styles.it}>the rhythm.</span>
+            <span className={styles.it}>{t("mariaHeadline2")}</span>
           </h2>
           <blockquote className={styles.mariaQuoteBody}>
-            <p>
-              &ldquo;i used to run ten kilometers every saturday. now i can
-              barely get out of bed before nine. i don&apos;t recognize my own
-              week.&rdquo;
-            </p>
-            <cite>— maria, six months after the move</cite>
+            <p>&ldquo;{t("mariaQuote")}&rdquo;</p>
+            <cite>{t("mariaQuoteAttr")}</cite>
           </blockquote>
         </div>
 
