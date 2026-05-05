@@ -5,6 +5,7 @@ import styles from "@/app/landing.module.css";
 import { OrbCanvas, type OrbHandle } from "@/components/orb-canvas";
 import { MariaIntro } from "@/components/maria-intro";
 import { Connected } from "@/components/connected";
+import { Runtime } from "@/components/runtime";
 import { Program } from "@/components/program";
 import { StickyOrb } from "@/components/sticky-orb";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -264,6 +265,7 @@ export function Landing() {
         </a>
         <div className={styles.navLinks}>
           <a href="#maria">{t("navMaria")}</a>
+          <a href="#runtime">{t("navRuntime")}</a>
           <a href="#program">{t("navProgram")}</a>
           <a href="#your-turn">{t("navYourTurn")}</a>
         </div>
@@ -338,7 +340,10 @@ export function Landing() {
         {/* ============== 03 CONNECTED — the designer reads her life ============== */}
         <Connected />
 
-        {/* ============== 04 PROGRAM — 12 weeks of micro-habits ============== */}
+        {/* ============== 04 RUNTIME — lives in your existing agentic tool (mcp) ============== */}
+        <Runtime />
+
+        {/* ============== 05 PROGRAM — 12 weeks of micro-habits ============== */}
         <Program />
 
         {/* ============== 05 YOUR TURN — interactive ============== */}

@@ -3,6 +3,7 @@ export type Lang = "en" | "fr";
 const en = {
   // nav
   navMaria: "maria",
+  navRuntime: "runtime",
   navProgram: "program",
   navYourTurn: "your turn",
   navBegin: "begin",
@@ -68,6 +69,31 @@ const en = {
   connectedAction1: "blocked 'walk · 20 min' in google calendar — every monday at 07:12",
   connectedAction2: "set slack do-not-disturb from 22:00, every evening",
   connectedAction3: "added a sunday review template in notion — 10 minutes, out loud",
+
+  // runtime — how it works (mcp)
+  runtimeTechLabel: "runtime.connect()",
+  runtimeSubLabel: "mcp · v1 · standard protocol",
+  runtimeHeadline1: "it lives where",
+  runtimeHeadline2: "you already are.",
+  runtimeIntro:
+    "no extra chat to set up. lifedesigner is an mcp server that plugs into the agentic tool you already use — claude, chatgpt, open web ui, cursor. your conversations stay where they are; the designer just shows up, with the connectors you authorized.",
+  runtimeHostsLabel: "compatible hosts",
+  runtimeHost1Name: "claude",
+  runtimeHost1Via: "desktop + web",
+  runtimeHost1Status: "mcp · ready",
+  runtimeHost2Name: "chatgpt",
+  runtimeHost2Via: "apps + custom gpts",
+  runtimeHost2Status: "openai connector · ready",
+  runtimeHost3Name: "open web ui",
+  runtimeHost3Via: "self-host",
+  runtimeHost3Status: "mcp · ready",
+  runtimeHost4Name: "cursor",
+  runtimeHost4Via: "ide",
+  runtimeHost4Status: "mcp · ready",
+  runtimeInstallLabel: "one config line",
+  runtimeInstallCmd: "npx -y @lifedesigner/mcp",
+  runtimeOutro:
+    "no new app. no new account. no extra chat window. just use your favorite agentic tool.",
 
   // program
   programTechLabel: "week.render(maria, goal=10k)",
@@ -209,6 +235,7 @@ const en = {
 const fr: typeof en = {
   // nav
   navMaria: "maria",
+  navRuntime: "runtime",
   navProgram: "programme",
   navYourTurn: "à toi",
   navBegin: "commencer",
@@ -274,6 +301,31 @@ const fr: typeof en = {
   connectedAction1: "bloque 'marche · 20 min' dans google calendar — chaque lundi à 07:12",
   connectedAction2: "active slack do-not-disturb dès 22:00, chaque soir",
   connectedAction3: "ajoute un template de revue dominicale dans notion — 10 minutes, à voix haute",
+
+  // runtime — how it works (mcp)
+  runtimeTechLabel: "runtime.connect()",
+  runtimeSubLabel: "mcp · v1 · protocole standard",
+  runtimeHeadline1: "il vit là où",
+  runtimeHeadline2: "tu es déjà.",
+  runtimeIntro:
+    "aucun nouveau chat à configurer. lifedesigner est un serveur mcp qui se branche dans l'outil agentique que tu utilises déjà — claude, chatgpt, open web ui, cursor. tes conversations restent là où elles sont ; le designer apparaît, avec les connecteurs que tu as autorisés.",
+  runtimeHostsLabel: "hôtes compatibles",
+  runtimeHost1Name: "claude",
+  runtimeHost1Via: "desktop + web",
+  runtimeHost1Status: "mcp · prêt",
+  runtimeHost2Name: "chatgpt",
+  runtimeHost2Via: "apps + gpts personnalisés",
+  runtimeHost2Status: "connecteur openai · prêt",
+  runtimeHost3Name: "open web ui",
+  runtimeHost3Via: "auto-hébergé",
+  runtimeHost3Status: "mcp · prêt",
+  runtimeHost4Name: "cursor",
+  runtimeHost4Via: "ide",
+  runtimeHost4Status: "mcp · prêt",
+  runtimeInstallLabel: "une ligne de config",
+  runtimeInstallCmd: "npx -y @lifedesigner/mcp",
+  runtimeOutro:
+    "pas de nouvelle app. pas de nouveau compte. pas de fenêtre de chat en plus. utilise simplement ton outil agentique préféré.",
 
   // program
   programTechLabel: "week.render(maria, goal=10k)",
