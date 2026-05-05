@@ -1,5 +1,5 @@
 .root {
-  /* light theme defaults */
+  /* light theme defaults — color tokens */
   --bg: #f6f3ec;
   --bg-soft: #efeae0;
   --paper: #ffffff;
@@ -15,9 +15,22 @@
   --grain-blend: multiply;
   --grain-opacity: 0.45;
   --card-glow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 18px 44px -32px rgba(28, 25, 23, 0.18);
+
+  /* layout tokens (theme-independent) */
+  --maxw: 1320px;
+  --gutter: clamp(20px, 5vw, 72px);
+
+  position: relative;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
 }
 
-/* dark theme */
+/* dark theme — only overrides color tokens, layout stays on .root */
 :global([data-theme="dark"]) .root {
   --bg: #0e0e10;
   --bg-soft: #18181b;
@@ -32,18 +45,6 @@
   --grain-blend: screen;
   --grain-opacity: 0.18;
   --card-glow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 44px -32px rgba(0, 0, 0, 0.6);
-
-  --maxw: 1320px;
-  --gutter: clamp(20px, 5vw, 72px);
-
-  position: relative;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  font-weight: 400;
-  font-size: 15px;
-  line-height: 1.55;
-  letter-spacing: -0.005em;
 }
 
 .grain {
