@@ -564,41 +564,48 @@
   overflow: hidden;
 }
 .integration {
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  align-items: start;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
   padding: 20px 22px;
   background: var(--paper);
+  min-width: 0;
+}
+.integrationHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--rule);
 }
 .integrationDot {
-  width: 8px;
-  height: 8px;
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   display: inline-block;
-  margin-top: 8px;
   box-shadow: 0 0 0 2px var(--paper);
 }
 .integrationName {
   font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.04em;
   color: var(--ink);
   text-transform: lowercase;
   font-weight: 500;
-  margin-top: 4px;
 }
 .integrationStream {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   min-width: 0;
 }
 .integrationStreamRow {
   display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 10px;
+  grid-template-columns: 64px 1fr;
+  gap: 14px;
   align-items: baseline;
+  min-width: 0;
 }
 .integrationStreamLabel {
   font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Menlo", monospace;
@@ -606,16 +613,18 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-quiet);
+  white-space: nowrap;
 }
 .integrationStreamLabelWrite {
   color: var(--coral);
 }
 .integrationStreamText {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--ink-soft);
   letter-spacing: -0.005em;
   font-feature-settings: "tnum";
-  line-height: 1.4;
+  line-height: 1.45;
+  min-width: 0;
 }
 .integrationStreamTextWrite {
   color: var(--ink);
@@ -2597,8 +2606,7 @@
   }
   .integration {
     padding: 18px 20px;
-    grid-template-columns: auto auto 1fr;
-    gap: 10px;
+    gap: 12px;
   }
   .footerInner {
     grid-template-columns: auto 1fr;
@@ -2678,6 +2686,10 @@
 
 /* mobile */
 @media (max-width: 640px) {
+  .integrationStreamRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
   .nav {
     padding: 14px var(--gutter);
   }

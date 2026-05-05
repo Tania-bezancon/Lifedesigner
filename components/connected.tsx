@@ -4,7 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import styles from "@/app/landing.module.css";
 import { useT } from "@/lib/i18n";
 
-const INTEGRATION_KEYS = ["gmail", "calendar", "slack", "notion", "health"] as const;
+const INTEGRATION_KEYS = [
+  "gmail",
+  "calendar",
+  "slack",
+  "notion",
+  "health",
+  "strava",
+] as const;
 
 const INTEGRATIONS_DATA: Record<
   (typeof INTEGRATION_KEYS)[number],
@@ -63,6 +70,17 @@ const INTEGRATIONS_DATA: Record<
     writes: {
       en: "shortens runs after a bad night's sleep",
       fr: "raccourcit les sorties après une mauvaise nuit",
+    },
+  },
+  strava: {
+    color: "#fc4c02",
+    reads: {
+      en: "weekly km · best 5k pace · effort score",
+      fr: "km hebdo · meilleur 5k · score d'effort",
+    },
+    writes: {
+      en: "schedules sunday recovery after a long run",
+      fr: "planifie la récup du dimanche après une sortie longue",
     },
   },
 };
@@ -181,22 +199,24 @@ export function Connected() {
               }`}
               style={{ transitionDelay: `${200 + i * 80}ms` }}
             >
-              <span
-                className={styles.integrationDot}
-                style={{ background: data.color }}
-                aria-hidden="true"
-              />
-              <span className={styles.integrationName}>{key}</span>
-              <span className={styles.integrationStream}>
-                <span className={styles.integrationStreamRow}>
+              <div className={styles.integrationHeader}>
+                <span
+                  className={styles.integrationDot}
+                  style={{ background: data.color }}
+                  aria-hidden="true"
+                />
+                <span className={styles.integrationName}>{key}</span>
+              </div>
+              <div className={styles.integrationStream}>
+                <div className={styles.integrationStreamRow}>
                   <span className={styles.integrationStreamLabel}>
                     {t("connectedReads")}
                   </span>
                   <span className={styles.integrationStreamText}>
                     {data.reads[lang]}
                   </span>
-                </span>
-                <span className={styles.integrationStreamRow}>
+                </div>
+                <div className={styles.integrationStreamRow}>
                   <span
                     className={`${styles.integrationStreamLabel} ${styles.integrationStreamLabelWrite}`}
                   >
@@ -207,8 +227,8 @@ export function Connected() {
                   >
                     {data.writes[lang]}
                   </span>
-                </span>
-              </span>
+                </div>
+              </div>
             </li>
           );
         })}
