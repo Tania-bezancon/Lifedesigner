@@ -434,6 +434,15 @@ function FooterBlock() {
           <ul className={styles.footerLinks}>
             <li>
               <a
+                href="https://seaviewlab.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t("footerLinkSeaviewlab")}
+              </a>
+            </li>
+            <li>
+              <a
                 href="https://www.linkedin.com/in/tania-bezancon/"
                 target="_blank"
                 rel="noopener noreferrer"

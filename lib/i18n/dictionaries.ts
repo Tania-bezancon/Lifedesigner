@@ -91,7 +91,7 @@ const en = {
   runtimeHost4Via: "ide",
   runtimeHost4Status: "mcp · ready",
   runtimeInstallLabel: "one config line",
-  runtimeInstallCmd: "npx -y @lifedesigner/mcp",
+  runtimeInstallCmd: "https://lifedesigner.app/mcp",
   runtimeOutro:
     "no new app. no new account. no extra chat window. just use your favorite agentic tool.",
 
@@ -213,12 +213,13 @@ const en = {
   ctaFoot: "free · 7 days · no card",
 
   // footer
-  footerBadge: "concept · interface",
+  footerBadge: "experiment · agentic tools",
   footerNote1:
-    "this is a concept interface for the lifedesigner domain — an exploration of what a voice-first life designer could feel like, not yet a working product.",
+    "lifedesigner is an experimental interface by Sea View Lab — exploring what agentic tools can become when they live inside the workflow you already use, not in a new chat window.",
   footerNote2:
-    "i built it because the productivity apps i tried treated me like a project to optimize. i wanted something quieter — something that listens before it suggests, and forgets to be loud.",
-  footerSign: "— tania bezancon, creator",
+    "Sea View Lab builds experimental projects to push what's possible with agentic, voice-first tools — interfaces that quietly fit into the way you already work.",
+  footerSign: "an experiment by sea view lab",
+  footerLinkSeaviewlab: "sea view lab",
   footerLinkLinkedin: "linkedin",
   footerLinkPortfolio: "portfolio",
   footerLinkGithub: "github",
@@ -229,7 +230,7 @@ const en = {
   footerNavCta: "request access",
   footerSysIdle: "presence.idle()",
   footerSysSession: "session",
-  footerSysCopyright: "© 2026 · concept by tania bezancon",
+  footerSysCopyright: "© 2026 · sea view lab",
 } as const;
 
 // FR is typed as Record<keyof typeof en, string> rather than `typeof en`
@@ -328,7 +329,7 @@ const fr: Record<keyof typeof en, string> = {
   runtimeHost4Via: "ide",
   runtimeHost4Status: "mcp · prêt",
   runtimeInstallLabel: "une ligne de config",
-  runtimeInstallCmd: "npx -y @lifedesigner/mcp",
+  runtimeInstallCmd: "https://lifedesigner.app/mcp",
   runtimeOutro:
     "pas de nouvelle app. pas de nouveau compte. pas de fenêtre de chat en plus. utilise simplement ton outil agentique préféré.",
 
@@ -450,12 +451,13 @@ const fr: Record<keyof typeof en, string> = {
   ctaFoot: "gratuit · 7 jours · sans carte",
 
   // footer
-  footerBadge: "concept · interface",
+  footerBadge: "expérience · outils agentiques",
   footerNote1:
-    "ceci est une interface conceptuelle pour le domaine lifedesigner — une exploration de ce qu'un designer de vie voice-first pourrait être, pas encore un produit fonctionnel.",
+    "lifedesigner est une interface expérimentale de Sea View Lab — une exploration de ce que les outils agentiques peuvent devenir quand ils vivent à l'intérieur du workflow que tu utilises déjà, pas dans une nouvelle fenêtre de chat.",
   footerNote2:
-    "je l'ai construit parce que les apps de productivité que j'ai essayées me traitaient comme un projet à optimiser. je voulais quelque chose de plus calme — qui écoute avant de suggérer, et qui oublie d'être bruyant.",
-  footerSign: "— tania bezancon, créatrice",
+    "Sea View Lab conçoit des projets expérimentaux pour pousser ce qui est possible avec les outils agentiques voice-first — des interfaces qui s'intègrent en silence à la façon dont tu travailles déjà.",
+  footerSign: "une expérience de sea view lab",
+  footerLinkSeaviewlab: "sea view lab",
   footerLinkLinkedin: "linkedin",
   footerLinkPortfolio: "portfolio",
   footerLinkGithub: "github",
@@ -466,7 +468,7 @@ const fr: Record<keyof typeof en, string> = {
   footerNavCta: "demander l'accès",
   footerSysIdle: "presence.idle()",
   footerSysSession: "session",
-  footerSysCopyright: "© 2026 · concept par tania bezancon",
+  footerSysCopyright: "© 2026 · sea view lab",
 };
 
 export const dictionaries = { en, fr } as const;

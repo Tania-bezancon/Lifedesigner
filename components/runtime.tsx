@@ -148,9 +148,9 @@ export function Runtime() {
           type="button"
           className={styles.runtimeInstallCode}
           onClick={copyInstall}
-          aria-label="copy install command"
+          aria-label="copy mcp endpoint url"
         >
-          <span className={styles.runtimeInstallPrompt}>$</span>
+          <span className={styles.runtimeInstallPrompt}>↗</span>
           <code>{t("runtimeInstallCmd")}</code>
           <span className={styles.runtimeInstallCopy}>
             {copied ? "copied" : "copy"}
