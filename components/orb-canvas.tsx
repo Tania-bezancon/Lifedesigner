@@ -84,7 +84,11 @@ void main(){
   float depth = smoothstep(radius, radius*0.2, r);
   vec3 col = mix(orbCol, orbCol*0.92, depth*0.25);
 
-  gl_FragColor = vec4(col, alpha);
+  // Premultiplied-alpha output: rgb is multiplied by alpha so the browser
+  // composites cleanly with the page bg via final = src.rgb + dst * (1 - src.a).
+  // This avoids the iOS Safari issue where non-premultiplied transparent
+  // regions get baked with a cream/white background.
+  gl_FragColor = vec4(col * alpha, alpha);
 }
 `;
 
@@ -135,15 +139,15 @@ export const OrbCanvas = forwardRef<OrbHandle, Props>(function OrbCanvas(
     if (!canvas) return;
     const gl = canvas.getContext("webgl", {
       antialias: true,
-      premultipliedAlpha: false,
+      premultipliedAlpha: true,
       alpha: true,
     });
     if (!gl) return;
-    // We draw a single full-screen quad per frame and write straight
-    // (non-premultiplied) RGBA. Disable WebGL blending so the framebuffer
-    // holds the shader's output verbatim; the browser compositor blends
-    // the canvas with whatever is behind it (cream page bg or another
-    // section background) using src.rgb * src.a + dst * (1 - a).
+    // Premultiplied-alpha pipeline: the shader writes vec4(col * alpha, alpha)
+    // and we keep blending disabled. The browser compositor uses the standard
+    // premultiplied formula `final = canvas.rgb + page.rgb * (1 - canvas.a)`,
+    // which iOS Safari handles reliably (the non-premultiplied path can leak
+    // a cream/white square into the canvas's "transparent" region).
     gl.disable(gl.BLEND);
     gl.clearColor(0, 0, 0, 0);
 

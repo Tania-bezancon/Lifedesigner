@@ -327,6 +327,7 @@
   width: 100%;
   height: 100%;
   display: block;
+  background: transparent;
 }
 .heroCopy {
   position: relative;
@@ -2232,6 +2233,7 @@
   width: 100%;
   height: 100%;
   display: block;
+  background: transparent;
 }
 .footerCenter {
   max-width: 52ch;
@@ -2391,6 +2393,7 @@
   width: 100%;
   height: 100%;
   display: block;
+  background: transparent;
 }
 
 /* ---------- sticky bottom-right orb ---------- */
@@ -2412,6 +2415,7 @@
   width: 100%;
   height: 100%;
   display: block;
+  background: transparent;
 }
 .stickyOrbActive {
   opacity: 1;
